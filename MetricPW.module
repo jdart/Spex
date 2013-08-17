@@ -9,7 +9,7 @@
  * http://metricmarketing.ca/blog/author/jonathan-dart
  *
  */
-class Metric extends WireData implements Module 
+class MetricPW extends WireData implements Module 
 {
 	protected 
 		$capturedJs = '',
@@ -24,7 +24,7 @@ class Metric extends WireData implements Module
 			'title' => 'Some Helpers For Metric Marketing', 
 			'version' => 001, 
 			'summary' => 'Some useful tools used by metric marketing.',
-			'href' => 'http://metricmarketing.ca',
+			'href' => 'https://github.com/jdart/MetricPW',
 			'singular' => true, 
 			'autoload' => true, 
 		);
@@ -79,7 +79,7 @@ class Metric extends WireData implements Module
 			'config' => $this->config,
 			'page' => $this->page,
 			'metric' => $this,
-			'settings' => $this->pages->get('/settings'),
+			'settings' => $this->pages->get('/settings/'),
 			'homepage' => $this->pages->get('/'),
 			'modules' => $this->modules
 		);
@@ -105,7 +105,7 @@ class Metric extends WireData implements Module
 		$this->includeJavascripts(array(
 			'modernizr.js',
 			'jquery.js',
-		), $config->urls->siteModules.'Metric/lib/');
+		), $config->urls->siteModules.'MetricPW/lib/');
 	}
 
 	public function addJavascript($input) 
@@ -227,7 +227,7 @@ class Metric extends WireData implements Module
 				window.less = { env: "development" };
 			</script>	
 
-			<script type="text/javascript" src="<?php echo $this->config->urls->siteModules ?>Metric/lib/less.js"></script>
+			<script type="text/javascript" src="<?php echo $this->config->urls->siteModules ?>MetricPW/lib/less.js"></script>
 			<?php
 		}
 	}

@@ -4,7 +4,7 @@
 
 MetricPW is a set of functions used by Metric Marketing for the ProcessWire CMS/CMF. The focus of the module is to provide asset (js/css/less) management and a cool way of dealing with templates.
 
-This library was born out of a love of ProcessWire and the yucky feeling the use of a head.inc and foot.inc left in my mouth. It assumes you want to use jQuery and modernizr.
+This library was born out of a love of ProcessWire and the yucky feeling the use of a head.inc and foot.inc left in my mouth. It assumes you want to use jQuery and modernizr. The project makes use of [lessphp](http://leafo.net/lessphp/) and [Minify](https://code.google.com/p/minify/).
 
 * [Information about the author](http://metricmarketing.ca/jonathan-dart)
 * [Information about Metric Marketing](http://metricmarketing.ca)
@@ -58,7 +58,7 @@ Or a bunch at once
 
 If the source files are outside of the template directory you'll need to pass a second parameter to addJavascript like the below:
 
-`$metric->addJavascript('lib/main.js', $config->urls->siteModules.'Metric/lib/'))`
+`$metric->addJavascript('lib/main.js', $config->urls->siteModules.'Metric/'))`
 
 The addStylesheet function works in the same way and accepts .less files and .css files.
 
@@ -72,7 +72,7 @@ You can set production mode explicitly, like the below, or you can let MetricPW 
 
 #### Deferring Inline JavaScript
 
-If you want to write some JavaScript use the docReady helper.
+If you want some JavaScript in your template that should execute after the JavaScript from _assets.php are included, then use the docReady helper.
 
     <?php $metric->docReady() ?>
 	    <script>$('#bx-me').bxSlider()</script>
