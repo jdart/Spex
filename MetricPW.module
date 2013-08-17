@@ -39,6 +39,10 @@ class MetricPW extends WireData implements Module
 
 	public function pageBeforeRender()
 	{
+		// Make sure this page isn't an admin page
+		if ($this->page->rootParent->id == $this->config->adminRootPageID)
+			return;
+
 		$asset_file = $this->config->paths->templates . '_assets.php';
 
 		extract($this->getTemplateVars());
@@ -49,6 +53,10 @@ class MetricPW extends WireData implements Module
 
 	public function pageAfterRender($event)
 	{
+		// Make sure this page isn't an admin page
+		if ($this->page->rootParent->id == $this->config->adminRootPageID)
+			return;
+
 		if (!$this->layout)
 			return;
 
