@@ -1,0 +1,276 @@
+<?php
+
+/**
+ * ProcessWire Metric Marketing module
+ * 
+ * By Jonathan Dart
+ * No Licence
+ * 
+ * http://metricmarketing.ca/blog/author/jonathan-dart
+ *
+ */
+class Metric extends WireData implements Module 
+{
+	protected 
+		$capturedJs = '',
+		$layout = 'default',
+		$javascripts = array(),
+		$stylesheets = array(),
+		$productionMode;
+
+	public static function getModuleInfo() 
+	{
+		return array(
+			'title' => 'Some Helpers For Metric Marketing', 
+			'version' => 001, 
+			'summary' => 'Some useful tools used by metric marketing.',
+			'href' => 'http://metricmarketing.ca',
+			'singular' => true, 
+			'autoload' => true, 
+		);
+	}
+
+	public function init() 
+	{
+		$this->addHookBefore('Page::render', $this, 'pageBeforeRender');
+
+		$this->addHookAfter('Page::render', $this, 'pageAfterRender'); 
+	}
+
+	public function pageBeforeRender()
+	{
+		$asset_file = $this->config->paths->templates . '_assets.php';
+
+		extract($this->getTemplateVars());
+
+		if (is_file($asset_file))		
+			require_once $asset_file;
+	}
+
+	public function pageAfterRender($event)
+	{
+		if (!$this->layout)
+			return;
+
+		$template_output = $event->return;
+
+		extract($this->getTemplateVars());
+		
+		// wrap page output in layout
+		ob_start();
+		require $config->paths->templates.'layout/'.$this->layout.'.php';
+		$layout_body = ob_get_clean();
+
+		// wrap layout output with base layout (head and assets stuff)
+		ob_start();
+		require $config->paths->templates.'layout/base.php';
+		$event->return = ob_get_clean();
+	}
+
+	public function setLayout($layout)
+	{
+		$this->layout = $layout;
+	}
+
+	public function getTemplateVars()
+	{
+		return array(
+			'pages' => $this->pages,
+			'config' => $this->config,
+			'page' => $this->page,
+			'metric' => $this,
+			'settings' => $this->pages->get('/settings'),
+			'homepage' => $this->pages->get('/'),
+			'modules' => $this->modules
+		);
+	}
+
+	public function setProductionMode($bool)
+	{
+		$this->productionMode = $bool;
+	}
+
+	public function isProductionMode()
+	{
+		if (isset($this->productionMode))
+			return $this->productionMode;
+
+		return strpos($this->config->httpHost, ".dev") === false;
+	}
+
+	public function includeHeadJavascripts()
+	{
+		$config = $this->config;
+
+		$this->includeJavascripts(array(
+			'modernizr.js',
+			'jquery.js',
+		), $config->urls->siteModules.'Metric/lib/');
+	}
+
+	public function addJavascript($input) 
+	{
+		if (!is_array($input))
+			$input = array($input);
+
+		foreach ($input as $js)
+			$this->javascripts[] = $js;
+	}
+
+	public function includeJavascripts(array $javascripts=null, $root=null)
+	{
+		$config = $this->config;
+
+		if (is_null($javascripts))
+			$javascripts = $this->javascripts;
+
+		if (is_null($root))
+			$root = $config->urls->templates;
+
+		if ($this->isProductionMode()) {
+
+			?>
+			<script 
+				type="text/javascript" 
+				src="<?php 
+					echo 
+						$config->urls->siteModules, 
+						'Minify/min/b=', 
+						trim($root, '/'), 
+						'&f=', 
+						implode(',', $javascripts) 
+				?>"
+			></script>
+			<?php
+
+		} else {
+
+			foreach ($javascripts as $javascript): ?>
+				<script type="text/javascript" src="<?php echo $root, $javascript ?>"></script>
+			<?php endforeach;
+		}
+	}
+
+	public function addStylesheet($input) 
+	{
+		if (!is_array($input))
+			$input = array($input);
+		
+		foreach ($input as $css)
+			$this->stylesheets[] = $css;
+	}
+
+	/**
+	 * Converts a .less file into a .css file
+	 *
+	 * foo/bar.less would become foo/~bar.css
+	 *
+	 * @return string The path to the new .css file.
+	 */
+	public function compileStylesheet($stylesheet)
+	{
+		$sheetInfo = pathinfo($stylesheet);
+
+		if ($sheetInfo['extension'] != 'less')
+			return $stylesheet;
+
+		$new_relative_path = $sheetInfo['dirname'] . '/~' . $sheetInfo['filename'] . '.css';
+
+		try {
+			$this->getLessc()
+				->checkedCompile(
+					$this->config->paths->root . $root . $stylesheet, 
+					$this->config->paths->root . $root . $new_relative_path
+				);						
+		} catch (Exception $e) {
+			echo "fatal error: " . $e->getMessage();
+		}
+
+		return $new_relative_path;
+	}
+
+	public function includeStylesheets(array $stylesheets=null, $root=null)
+	{
+		if (is_null($stylesheets))
+			$stylesheets = $this->stylesheets;
+
+		if (is_null($root))
+			$root = $this->config->urls->templates;
+
+		if ($this->isProductionMode()) {
+
+			foreach ($stylesheets as &$stylesheet)
+				$stylesheet = $this->compileStylesheet($stylesheet);
+
+			?>
+			<link 
+				href="<?php
+					echo 
+						$config->urls->siteModules, 
+						'Minify/min/b=', 
+						trim($root, '/'), 
+						'&f=', 
+						implode(",", $stylesheets) 
+				?>" 
+				rel="stylesheet" 
+				type="text/css" 
+			/>
+			<?php
+
+		} else {
+
+			foreach ($stylesheets as $stylesheet): ?>
+				<link rel="stylesheet/less" media="screen" href="<?php echo $this->config->urls->templates . $stylesheet ?>">
+			<?php endforeach ?>
+
+			<script type="text/javascript">
+				window.less = { env: "development" };
+			</script>	
+
+			<script type="text/javascript" src="<?php echo $this->config->urls->siteModules ?>Metric/lib/less.js"></script>
+			<?php
+		}
+	}
+
+	public function getLessc()
+	{
+		require_once __DIR__.'/lib/lessphp/lessc.inc.php';
+
+		return new lessc;
+	}
+
+	public function includeDocumentReadyJavascript()
+	{
+		?>
+		<script type="text/javascript">
+			jQuery(function(){
+				<?php echo $this->capturedJs ?>
+			});
+		</script>
+		<?php
+	}
+
+	public function docReady()
+	{
+		$this->documentReadyJavascript();
+	}
+
+	public function documentReadyJavascript()
+	{
+		static $captureStarted = false;
+
+		if (empty($captureStarted)) { 
+			$captureStarted = true;
+			ob_start();
+			return;
+		}
+
+		$this->capturedJs .= ';'. str_replace(
+			array('<script>', '<script type="text/javascript">', '</script>'), 
+			'', 
+			ob_get_clean()
+		);
+
+		$captureStarted = false;
+	}
+}
