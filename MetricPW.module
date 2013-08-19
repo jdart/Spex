@@ -98,6 +98,11 @@ class MetricPW extends WireData implements Module
 		$this->layout = $layout;
 	}
 
+	public function getLayout()
+	{
+		return $this->layout;
+	}
+
 	public function addTemplateVar($key, $value)
 	{
 		$this->templateVars[$key] = $value;
@@ -110,7 +115,8 @@ class MetricPW extends WireData implements Module
 			'config' => $this->config,
 			'page' => $this->page,
 			'metric' => $this,
-			'modules' => $this->modules
+			'modules' => $this->modules,
+			'input' => $this->input
 		), 
 			$this->templateVars
 		);
@@ -303,12 +309,22 @@ class MetricPW extends WireData implements Module
 			return;
 		}
 
-		$this->capturedJs .= ';'. str_replace(
+		$this->capturedJs .= ';' . str_replace(
 			array('<script>', '<script type="text/javascript">', '</script>'), 
 			'', 
 			ob_get_clean()
 		);
 
 		$captureStarted = false;
+	}
+
+	public function block($name)
+	{
+		$path = sprintf('%s_%s.php', $this->config->paths->templates, $name);
+
+		extract($this->getTemplateVars());
+
+		if (is_file($path))
+			require $path;
 	}
 }
