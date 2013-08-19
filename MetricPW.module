@@ -17,6 +17,7 @@ class MetricPW extends WireData implements Module
 		$javascripts = array(),
 		$stylesheets = array(),
 		$templateVars = array(),
+		$developmentTld = '.dev',
 		$productionMode;
 
 	public static function getModuleInfo() 
@@ -42,7 +43,7 @@ class MetricPW extends WireData implements Module
 
 	public function templateFileBeforeRender($event)
 	{
-		foreach ($this->templateVars as $key => $value)
+		foreach ($this->getTemplateVars() as $key => $value)
 			$event->object->setGlobal($key, $value);
 	}
 
@@ -112,6 +113,11 @@ class MetricPW extends WireData implements Module
 		);
 	}
 
+	public function setDevelopmentTld($tld)
+	{
+		$this->developmentTld = $tld;
+	}
+
 	public function setProductionMode($bool)
 	{
 		$this->productionMode = $bool;
@@ -122,7 +128,7 @@ class MetricPW extends WireData implements Module
 		if (isset($this->productionMode))
 			return $this->productionMode;
 
-		return strpos($this->config->httpHost, ".dev") === false;
+		return strpos($this->config->httpHost, $this->developmentTld) === false;
 	}
 
 	public function includeHeadJavascripts()

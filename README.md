@@ -2,9 +2,9 @@
 
 ## About MetricPW
 
-MetricPW is a set of functions used by Metric Marketing for the ProcessWire CMS/CMF. The focus of the module is to provide asset (js/css/less) management and a cool way of dealing with templates.
+MetricPW is an asset and template management module for the [ProcessWire CMS/CMF](http://processwire.com/). 
 
-This library was born out of a love of ProcessWire and the yucky feeling the use of a head.inc and foot.inc left in my mouth. It assumes you want to use jQuery and modernizr. The project makes use of [lessphp](http://leafo.net/lessphp/) and [Minify](https://code.google.com/p/minify/).
+This library was born out of a love of ProcessWire and the yucky feeling the use of a head.inc and foot.inc left in my mouth. The project makes use of [lessphp](http://leafo.net/lessphp/), [less.js](http://lesscss.org/), [jQuery](http://jquery.com/), [modernizr](http://modernizr.com/), [Minify](https://code.google.com/p/minify/) and the ProcessWire [Minify Module](http://modules.processwire.com/modules/minify/).
 
 * [Information about the author](http://metricmarketing.ca/jonathan-dart)
 * [Information about Metric Marketing](http://metricmarketing.ca)
@@ -64,11 +64,11 @@ The addStylesheet function works in the same way and accepts .less files and .cs
 
 #### Production Mode
 
-MetricPW gives you two modes of operation, production and not production. Assets are concatenated and minified when in production mode, when not in production mode they are served as-is.
+MetricPW gives you two modes of operation, production and development (not production). Assets are concatenated and minified when in production mode, when not in production mode they are served as-is.
 
 You can set production mode explicitly, like the below, or you can let MetricPW guess which mode to use based on whether the httpHost uses a top level domain of .dev or not.
 
-`$metric->setProduction(true)` 
+`$metric->setProduction(true)`
 
 #### Deferring Inline JavaScript
 
