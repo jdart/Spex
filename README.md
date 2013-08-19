@@ -16,7 +16,7 @@ This library was born out of a love of ProcessWire and the yucky feeling the use
 These steps assume you have ProcessWire installed.
 
 * Install the [Minify Module](http://modules.processwire.com/modules/minify/)
-* Clone this repo in you're site's modules directory
+* Clone this repo in your site's modules directory
 * [Install the module](http://modules.processwire.com/install-uninstall/)
 
 ## Usage

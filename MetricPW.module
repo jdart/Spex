@@ -142,7 +142,7 @@ class MetricPW extends WireData implements Module
 				type="text/javascript" 
 				src="<?php 
 					echo 
-						$config->urls->siteModules, 
+						$this->config->urls->siteModules, 
 						'Minify/min/b=', 
 						trim($root, '/'), 
 						'&f=', 
@@ -175,7 +175,7 @@ class MetricPW extends WireData implements Module
 	 *
 	 * @return string The path to the new .css file.
 	 */
-	public function compileStylesheet($stylesheet)
+	public function compileStylesheet($stylesheet, $root)
 	{
 		$sheetInfo = pathinfo($stylesheet);
 
@@ -208,13 +208,13 @@ class MetricPW extends WireData implements Module
 		if ($this->isProductionMode()) {
 
 			foreach ($stylesheets as &$stylesheet)
-				$stylesheet = $this->compileStylesheet($stylesheet);
+				$stylesheet = $this->compileStylesheet($stylesheet, $root);
 
 			?>
 			<link 
 				href="<?php
 					echo 
-						$config->urls->siteModules, 
+						$this->config->urls->siteModules, 
 						'Minify/min/b=', 
 						trim($root, '/'), 
 						'&f=', 
