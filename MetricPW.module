@@ -190,16 +190,6 @@ class MetricPW extends WireData implements Module
 		}
 	}
 
-	public function implodeFilenameArray(FilenameArray $input, $separator=',') 
-	{
-		$native_array = array();
-
-		foreach ($input as $one)
-			$native_array[] = $one;
-
-		return implode($separator, $input);
-	}
-
 	public function addStylesheet($input, $root=null) 
 	{
 		if (!is_array($input))
