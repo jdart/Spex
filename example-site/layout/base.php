@@ -7,7 +7,7 @@
 
 		<title><?php echo $page->get("headline|title") ?></title>
 
-		<?php if($page->summary): ?>
+		<?php if ($page->summary): ?>
 			<meta name="description" content="<?php echo $page->summary ?>" />
 		<?php endif ?>
 
