@@ -14,8 +14,6 @@ class MetricPW extends WireData implements Module
 	protected 
 		$capturedJs = '',
 		$layout = 'default',
-		$javascripts = array(),
-		$stylesheets = array(),
 		$templateVars = array(),
 		$developmentTld = '.dev',
 		$productionMode;
@@ -47,10 +45,15 @@ class MetricPW extends WireData implements Module
 			$event->object->setGlobal($key, $value);
 	}
 
+	public function pageIsAdmin($page)
+	{
+		return $page->rootParent->id == $this->config->adminRootPageID;
+	}
+
 	public function pageBeforeRender($event)
 	{
 		// Make sure this page isn't an admin page
-		if ($this->page->rootParent->id == $this->config->adminRootPageID)
+		if ($this->pageIsAdmin($event->object))
 			return;
 
 		extract($this->getTemplateVars());
@@ -69,7 +72,7 @@ class MetricPW extends WireData implements Module
 	public function pageAfterRender($event)
 	{
 		// Make sure this page isn't an admin page
-		if ($this->page->rootParent->id == $this->config->adminRootPageID)
+		if ($this->pageIsAdmin($event->object))
 			return;
 
 		if (!$this->layout)
@@ -150,7 +153,7 @@ class MetricPW extends WireData implements Module
 			$root = $this->config->urls->templates;
 
 		foreach ($input as $js)
-			$this->javascripts[] = $root.$js;
+			$this->config->scripts->add($root.$js);
 	}
 
 	public function includeJavascripts(array $javascripts=null, $root=null)
@@ -158,7 +161,7 @@ class MetricPW extends WireData implements Module
 		$config = $this->config;
 
 		if (is_null($javascripts))
-			$javascripts = $this->javascripts;
+			$javascripts = $this->config->scripts->getIterator()->getArrayCopy();
 
 		if (!is_null($root))
 			foreach ($javascripts as &$js)
@@ -187,6 +190,16 @@ class MetricPW extends WireData implements Module
 		}
 	}
 
+	public function implodeFilenameArray(FilenameArray $input, $separator=',') 
+	{
+		$native_array = array();
+
+		foreach ($input as $one)
+			$native_array[] = $one;
+
+		return implode($separator, $input);
+	}
+
 	public function addStylesheet($input, $root=null) 
 	{
 		if (!is_array($input))
@@ -196,7 +209,7 @@ class MetricPW extends WireData implements Module
 			$root = $this->config->urls->templates;
 		
 		foreach ($input as $css)
-			$this->stylesheets[] = $root.$css;
+			$this->config->styles->add($root.$css);
 	}
 
 	/**
@@ -231,7 +244,7 @@ class MetricPW extends WireData implements Module
 	public function includeStylesheets(array $stylesheets=null)
 	{
 		if (is_null($stylesheets))
-			$stylesheets = $this->stylesheets;
+			$stylesheets = $this->config->styles->getIterator()->getArrayCopy();
 
 		if ($this->isProductionMode()) {
 
