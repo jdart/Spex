@@ -34,7 +34,7 @@ MetricPW expects certain files to exist in your templates directory. You can fin
 
 This file is responsible for outputting the html, head, body, link (css) and script (js) tags.
 
-This file will have a variable $layout_body that has the output from the the layout.
+This file will have a variable $layout_body that has the output from the layout.
 
 #### layout/default.php
 
@@ -52,19 +52,19 @@ MetricPW assumes you want your script tags just before the `</body>` tag. You ca
 
 `$metric->addJavascript('scripts/main.js')`
 
-Or a bunch at once
+Or a bunch at once:
 
 `$metric->addJavascript(array('scripts/main.js', 'scripts/another.js'))`
 
 If the source files are outside of the template directory you'll need to pass a second parameter to addJavascript like the below:
 
-`$metric->addJavascript('lib/main.js', $config->urls->siteModules.'Metric/'))`
+`$metric->addJavascript('lib/main.js', $config->urls->siteModules.'MetricPW/'))`
 
 The addStylesheet function works in the same way and accepts .less files and .css files.
 
 #### Production Mode
 
-MetricPW gives you two modes of operation, production and not production. When in production mode assets are concatenated and minified, when not in production mode they are served as is.
+MetricPW gives you two modes of operation, production and not production. Assets are concatenated and minified when in production mode, when not in production mode they are served as-is.
 
 You can set production mode explicitly, like the below, or you can let MetricPW guess which mode to use based on whether the httpHost uses a top level domain of .dev or not.
 
