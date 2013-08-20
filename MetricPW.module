@@ -30,6 +30,34 @@ class MetricPW extends WireData implements Module
 		);
 	}
 
+	public function ___install()
+	{
+		$layout_dir = $this->config->paths->templates.'layout';
+
+		if (!is_dir($layout))
+			mkdir($layout_dir);
+
+		$base_file = $this->config->paths->templates.'layout/base.php';
+
+		if (!is_file($base_file))
+			copy(__DIR__.'/example-site/layout/base.php', $base_file);
+
+		$default_file = $this->config->paths->templates.'layout/default.php';
+
+		if (!is_file($default_file))
+			copy(__DIR__.'/example-site/layout/default.php', $default_file);
+
+		$asset_file = $this->config->paths->templates.'_assets.php';
+
+		if (!is_file($asset_file))
+			copy(__DIR__.'/example-site/_assets.php', $asset_file);
+
+		$init_file = $this->config->paths->templates.'_init.php';
+
+		if (!is_file($init_file))
+			copy(__DIR__.'/example-site/_init.php', $init_file);
+	}
+
 	public function init() 
 	{
 		$this->addHookBefore('TemplateFile::render', $this, 'templateFileBeforeRender');
@@ -110,14 +138,9 @@ class MetricPW extends WireData implements Module
 
 	public function getTemplateVars()
 	{
-		return array_merge(array(
-			'pages' => $this->pages,
-			'config' => $this->config,
-			'page' => $this->page,
-			'metric' => $this,
-			'modules' => $this->modules,
-			'input' => $this->input
-		), 
+		return array_merge(
+			fuel()->getArray(), 
+			array('metric' => $this),
 			$this->templateVars
 		);
 	}
