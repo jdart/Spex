@@ -250,8 +250,8 @@ class MetricPW extends WireData implements Module
 		try {
 			$this->getLessc()
 				->checkedCompile(
-					$this->config->paths->root . $stylesheet, 
-					$this->config->paths->root . $new_relative_path
+					$this->config->paths->root . trim($stylesheet, '/'), 
+					$this->config->paths->root . trim($new_relative_path, '/')
 				);						
 		} catch (Exception $e) {
 			echo "fatal error: " . $e->getMessage();
