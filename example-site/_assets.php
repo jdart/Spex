@@ -1,10 +1,14 @@
 <?php
 
-// jquery and modernizr automatically included
-$metric->addJavascript(array(
-	'scripts/main.js',
-));
+/**
+ * Add some assets. jQuery and modernizr are already taken care of.
+ */
 
-$metric->addStylesheet(array(
-	'styles/main.less',
-));
+
+// $metric->addJavascript(array(
+// 	'scripts/main.js',
+// ));
+
+// $metric->addStylesheet(array(
+// 	'styles/main.less',
+// ));
