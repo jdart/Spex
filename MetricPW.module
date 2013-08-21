@@ -32,7 +32,7 @@ class MetricPW extends WireData implements Module
 
 	public function ___install()
 	{
-		$this->createDir($layout_dir = $this->config->paths->templates.'layout');
+		$this->createDir($this->config->paths->templates.'layout');
 
 		$tpl_dir = $this->config->paths->templates;
 
@@ -56,7 +56,7 @@ class MetricPW extends WireData implements Module
 	public function createDir($path)
 	{
 		if (!is_dir($path))
-			mkdir($layout_dir, octdec($this->config->chmodDir), true);
+			mkdir($path, octdec($this->config->chmodDir), true);
 	}
 
 	public function init() 
