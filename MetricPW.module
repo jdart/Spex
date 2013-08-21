@@ -32,10 +32,9 @@ class MetricPW extends WireData implements Module
 
 	public function ___install()
 	{
-		$this->createDir($this->config->paths->templates.'layout');
-
 		$tpl_dir = $this->config->paths->templates;
 
+		$this->createDir($tpl_dir.'layout');
 		$this->copyFile(__DIR__.'/example-site/layout/base.php', $tpl_dir.'layout/base.php');
 		$this->copyFile(__DIR__.'/example-site/layout/default.php', $tpl_dir.'layout/default.php');
 		$this->copyFile(__DIR__.'/example-site/_assets.php', $tpl_dir.'_assets.php');
