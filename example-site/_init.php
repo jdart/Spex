@@ -7,7 +7,13 @@
 // $metric->setLayout('default');
 
 /**
- * Add a template variaible.
+ * Add a template variable.
  */
 
 // $metric->addTemplateVar('foo', 'bar');
+
+/**
+ * Force production/debug mode
+ */
+
+// $metric->setProductionMode(true);

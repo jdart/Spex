@@ -87,6 +87,8 @@ class MetricPW extends WireData implements Module
 		extract($this->getTemplateVars());
 
 		$init_file = $this->config->paths->templates . '_init.php';
+		
+		$this->config->debug = !$this->isProductionMode();
 
 		if (is_file($init_file))		
 			require_once $init_file;
@@ -163,6 +165,11 @@ class MetricPW extends WireData implements Module
 		return strpos($this->config->httpHost, $this->developmentTld) === false;
 	}
 
+	public function includeHeadScripts()
+	{
+		$this->includeHeadJavascripts();
+	}
+
 	public function includeHeadJavascripts()
 	{
 		$config = $this->config;
@@ -171,6 +178,11 @@ class MetricPW extends WireData implements Module
 			'modernizr.js',
 			'jquery.js',
 		), $config->urls->siteModules.'MetricPW/lib/');
+	}
+
+	public function addScript($input, $root=null)
+	{
+		$this->addJavascript($input, $root);
 	}
 
 	public function addJavascript($input, $root=null) 
@@ -183,6 +195,11 @@ class MetricPW extends WireData implements Module
 
 		foreach ($input as $js)
 			$this->config->scripts->add($root.$js);
+	}
+
+	public function includeScripts(array $javascripts=null, $root=null)
+	{
+		$this->includeJavascripts($javascripts, $root);
 	}
 
 	public function includeJavascripts(array $javascripts=null, $root=null)
@@ -217,6 +234,11 @@ class MetricPW extends WireData implements Module
 				<script type="text/javascript" src="<?php echo $javascript ?>"></script>
 			<?php endforeach;
 		}
+	}
+
+	public function addStyle($input, $root=null)
+	{
+		$this->addStylesheet($input, $root);
 	}
 
 	public function addStylesheet($input, $root=null) 
@@ -260,10 +282,19 @@ class MetricPW extends WireData implements Module
 		return $new_relative_path;
 	}
 
-	public function includeStylesheets(array $stylesheets=null)
+	public function includeStyles(array $stylesheets=null, $root=null)
+	{
+		$this->includeStylesheets($stylesheets);
+	}
+
+	public function includeStylesheets(array $stylesheets=null, $root=null)
 	{
 		if (is_null($stylesheets))
 			$stylesheets = $this->config->styles->getIterator()->getArrayCopy();
+
+		if (!is_null($root))
+			foreach ($stylesheets as &$style)
+				$style = $root.$style;
 
 		if ($this->isProductionMode()) {
 
@@ -304,6 +335,11 @@ class MetricPW extends WireData implements Module
 		require_once __DIR__.'/lib/lessphp/lessc.inc.php';
 
 		return new lessc;
+	}
+
+	public function includeDocReady()
+	{
+		$this->includeDocumentReadyJavascript();
 	}
 
 	public function includeDocumentReadyJavascript()

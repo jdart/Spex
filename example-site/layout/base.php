@@ -11,9 +11,9 @@
 			<meta name="description" content="<?php echo $page->summary ?>" />
 		<?php endif ?>
 
-		<?php $metric->includeStylesheets() ?>
+		<?php $metric->includeStyles() ?>
 		
-		<?php $metric->includeHeadJavascripts() ?>
+		<?php $metric->includeHeadScripts() ?>
 
 	</head>
 	<body class="<?php echo "template-$page->template section-{$page->rootParent->name} page-$page layout-{$metric->getLayout()}"; ?>">
@@ -24,9 +24,9 @@
 			<a class="nav" id="editpage" href="<?php echo $config->urls->admin ?>page/edit/?id=<?php echo $page->id ?>">Edit</a>
 		<?php endif ?>
 
-		<?php $metric->includeJavascripts() ?>
+		<?php $metric->includeScripts() ?>
 
-		<?php $metric->includeDocumentReadyJavascript() ?>
+		<?php $metric->includeDocReady() ?>
 
 	</body>
 </html>
