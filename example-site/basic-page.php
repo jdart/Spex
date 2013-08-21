@@ -1,8 +1,16 @@
 <?php 
 
-$metric->addStylesheet("styles/basic-page.less");
+/**
+ * You might want to add some css/less for this layout only.
+ */ 
 
-$metric->setLayout('default');
+// $metric->addStylesheet("styles/basic-page.less");
+
+/**
+ * To override the default layout change the below.
+ */
+
+// $metric->setLayout('default');
 
 ?>
 
