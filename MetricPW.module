@@ -175,7 +175,7 @@ class MetricPW extends WireData implements Module
 				src="<?php 
 					echo
 						$this->config->urls->siteModules,
-						'Minify/min',
+						'Minify/min/',
 						'?f=',
 						implode(',', $javascripts)
 				?>"
@@ -246,7 +246,7 @@ class MetricPW extends WireData implements Module
 				href="<?php
 					echo 
 						$this->config->urls->siteModules, 
-						'Minify/min', 
+						'Minify/min/', 
 						'?f=', 
 						implode(",", $stylesheets) 
 				?>" 
