@@ -16,7 +16,7 @@
 		<?php $metric->includeHeadScripts() ?>
 
 	</head>
-	<body class="<?php echo "template-$page->template section-{$page->rootParent->name} page-$page layout-{$metric->getLayout()}"; ?>">
+	<body class="<?php echo "template-$page->template section-{$page->rootParent->name} page-$page layout-{$metric->getLayout()}" ?>">
 
 		<?php echo $layout_body ?>
 
