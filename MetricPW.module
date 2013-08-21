@@ -212,10 +212,8 @@ class MetricPW extends WireData implements Module
 			<script 
 				type="text/javascript" 
 				src="<?php 
-					echo
-						$this->config->urls->siteModules,
-						'Minify/min/',
-						'?f=',
+					echo $this->config->urls->siteModules,
+						'Minify/min/?f=',
 						implode(',', $javascripts)
 				?>"
 			></script>
@@ -301,10 +299,8 @@ class MetricPW extends WireData implements Module
 			?>
 			<link 
 				href="<?php
-					echo 
-						$this->config->urls->siteModules, 
-						'Minify/min/', 
-						'?f=', 
+					echo $this->config->urls->siteModules, 
+						'Minify/min/?f=', 
 						implode(",", $stylesheets) 
 				?>" 
 				rel="stylesheet" 
