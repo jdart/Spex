@@ -108,12 +108,18 @@ class MetricPW extends WireData implements Module
 
 		$template_output = $event->return;
 
-		extract($this->getTemplateVars());
-		
-		// wrap page output in layout
-		ob_start();
-		require $config->paths->templates.'layout/'.$this->layout.'.php';
-		$layout_body = ob_get_clean();
+		extract($this->getTemplateVars());		
+
+		if ($this->layout === 'base') { // skip the layout
+
+			$layout_body = $template_output;
+			
+		} else { // wrap page output in layout
+
+			ob_start();
+			require $config->paths->templates.'layout/'.$this->layout.'.php';
+			$layout_body = ob_get_clean();
+		}
 
 		// wrap layout output with base layout (head and assets stuff)
 		ob_start();
