@@ -32,38 +32,36 @@ class MetricPW extends WireData implements Module
 
 	public function ___install()
 	{
-		$layout_dir = $this->config->paths->templates.'layout';
+		$tpl_dir = $this->config->paths->templates;
 
-		if (!is_dir($layout))
-			mkdir($layout_dir);
+		$this->createDir($tpl_dir.'layout');
+		$this->copyFile(__DIR__.'/example-site/layout/base.php', $tpl_dir.'layout/base.php');
+		$this->copyFile(__DIR__.'/example-site/layout/one-column.php', $tpl_dir.'layout/one-column.php');
+		$this->copyFile(__DIR__.'/example-site/_assets.php', $tpl_dir.'_assets.php');
+		$this->copyFile(__DIR__.'/example-site/_init.php', $tpl_dir.'_init.php');
+	}
 
-		$base_file = $this->config->paths->templates.'layout/base.php';
+	public function copyFile($source, $dest, $overwrite=false)
+	{
+		if ($overwrite && is_file($dest))
+			unlink($dest);
 
-		if (!is_file($base_file))
-			copy(__DIR__.'/example-site/layout/base.php', $base_file);
+		if (!is_file($dest)) {
+			copy($source, $dest);
+			chmod($dest, octdec($this->config->chmodFile));
+		}
+	}
 
-		$default_file = $this->config->paths->templates.'layout/default.php';
-
-		if (!is_file($default_file))
-			copy(__DIR__.'/example-site/layout/default.php', $default_file);
-
-		$asset_file = $this->config->paths->templates.'_assets.php';
-
-		if (!is_file($asset_file))
-			copy(__DIR__.'/example-site/_assets.php', $asset_file);
-
-		$init_file = $this->config->paths->templates.'_init.php';
-
-		if (!is_file($init_file))
-			copy(__DIR__.'/example-site/_init.php', $init_file);
+	public function createDir($path)
+	{
+		if (!is_dir($path))
+			mkdir($path, octdec($this->config->chmodDir), true);
 	}
 
 	public function init() 
 	{
 		$this->addHookBefore('TemplateFile::render', $this, 'templateFileBeforeRender');
-
 		$this->addHookBefore('Page::render', $this, 'pageBeforeRender');
-
 		$this->addHookAfter('Page::render', $this, 'pageAfterRender'); 
 	}
 
@@ -87,6 +85,8 @@ class MetricPW extends WireData implements Module
 		extract($this->getTemplateVars());
 
 		$init_file = $this->config->paths->templates . '_init.php';
+		
+		$this->config->debug = !$this->isProductionMode();
 
 		if (is_file($init_file))		
 			require_once $init_file;
@@ -108,12 +108,18 @@ class MetricPW extends WireData implements Module
 
 		$template_output = $event->return;
 
-		extract($this->getTemplateVars());
-		
-		// wrap page output in layout
-		ob_start();
-		require $config->paths->templates.'layout/'.$this->layout.'.php';
-		$layout_body = ob_get_clean();
+		extract($this->getTemplateVars());		
+
+		if ($this->layout === 'base') { // skip the layout
+
+			$layout_body = $template_output;
+			
+		} else { // wrap page output in layout
+
+			ob_start();
+			require $config->paths->templates.'layout/'.$this->layout.'.php';
+			$layout_body = ob_get_clean();
+		}
 
 		// wrap layout output with base layout (head and assets stuff)
 		ob_start();
@@ -163,7 +169,7 @@ class MetricPW extends WireData implements Module
 		return strpos($this->config->httpHost, $this->developmentTld) === false;
 	}
 
-	public function includeHeadJavascripts()
+	public function includeHeadScripts()
 	{
 		$config = $this->config;
 
@@ -173,7 +179,12 @@ class MetricPW extends WireData implements Module
 		), $config->urls->siteModules.'MetricPW/lib/');
 	}
 
-	public function addJavascript($input, $root=null) 
+	public function includeHeadJavascripts()
+	{
+		$this->includeHeadScripts();
+	}
+
+	public function addScript($input, $root=null)
 	{
 		if (!is_array($input))
 			$input = array($input);
@@ -185,7 +196,12 @@ class MetricPW extends WireData implements Module
 			$this->config->scripts->add($root.$js);
 	}
 
-	public function includeJavascripts(array $javascripts=null, $root=null)
+	public function addJavascript($input, $root=null) 
+	{
+		$this->addScript($input, $root);
+	}
+
+	public function includeScripts(array $javascripts=null, $root=null)
 	{
 		$config = $this->config;
 
@@ -202,10 +218,8 @@ class MetricPW extends WireData implements Module
 			<script 
 				type="text/javascript" 
 				src="<?php 
-					echo
-						$this->config->urls->siteModules,
-						'Minify/min',
-						'?f=',
+					echo $this->config->urls->siteModules,
+						'Minify/min/?f=',
 						implode(',', $javascripts)
 				?>"
 			></script>
@@ -219,7 +233,12 @@ class MetricPW extends WireData implements Module
 		}
 	}
 
-	public function addStylesheet($input, $root=null) 
+	public function includeJavascripts(array $javascripts=null, $root=null)
+	{
+		$this->includeScripts($javascripts, $root);
+	}
+
+	public function addStyle($input, $root=null)
 	{
 		if (!is_array($input))
 			$input = array($input);
@@ -231,6 +250,11 @@ class MetricPW extends WireData implements Module
 			$this->config->styles->add($root.$css);
 	}
 
+	public function addStylesheet($input, $root=null) 
+	{
+		$this->addStyles($input, $root);
+	}
+
 	/**
 	 * Converts a .less file into a .css file
 	 *
@@ -238,8 +262,13 @@ class MetricPW extends WireData implements Module
 	 *
 	 * @return string The path to the new .css file.
 	 */
-	public function compileStylesheet($stylesheet)
+	public function compileStyle($stylesheet)
 	{
+		static $lessc;
+
+		if (empty($lessc))
+			$lessc = $this->getLessc();
+
 		$sheetInfo = pathinfo($stylesheet);
 
 		if ($sheetInfo['extension'] != 'less')
@@ -248,11 +277,10 @@ class MetricPW extends WireData implements Module
 		$new_relative_path = $sheetInfo['dirname'] . '/~' . $sheetInfo['filename'] . '.css';
 
 		try {
-			$this->getLessc()
-				->checkedCompile(
-					$this->config->paths->root . trim($stylesheet, '/'), 
-					$this->config->paths->root . trim($new_relative_path, '/')
-				);						
+			$lessc->checkedCompile(
+				$this->config->paths->root . trim($stylesheet, '/'), 
+				$this->config->paths->root . trim($new_relative_path, '/')
+			);						
 		} catch (Exception $e) {
 			echo "fatal error: " . $e->getMessage();
 		}
@@ -260,23 +288,25 @@ class MetricPW extends WireData implements Module
 		return $new_relative_path;
 	}
 
-	public function includeStylesheets(array $stylesheets=null)
+	public function includeStyles(array $stylesheets=null, $root=null)
 	{
 		if (is_null($stylesheets))
 			$stylesheets = $this->config->styles->getIterator()->getArrayCopy();
 
+		if (!is_null($root))
+			foreach ($stylesheets as &$style)
+				$style = $root.$style;
+
 		if ($this->isProductionMode()) {
 
 			foreach ($stylesheets as &$stylesheet)
-				$stylesheet = $this->compileStylesheet($stylesheet);
+				$stylesheet = $this->compileStyle($stylesheet);
 
 			?>
 			<link 
 				href="<?php
-					echo 
-						$this->config->urls->siteModules, 
-						'Minify/min', 
-						'?f=', 
+					echo $this->config->urls->siteModules, 
+						'Minify/min/?f=', 
 						implode(",", $stylesheets) 
 				?>" 
 				rel="stylesheet" 
@@ -299,6 +329,11 @@ class MetricPW extends WireData implements Module
 		}
 	}
 
+	public function includeStylesheets(array $stylesheets=null, $root=null)
+	{
+		$this->includeStyles($stylesheets, $roots);
+	}
+
 	public function getLessc()
 	{
 		require_once __DIR__.'/lib/lessphp/lessc.inc.php';
@@ -306,7 +341,7 @@ class MetricPW extends WireData implements Module
 		return new lessc;
 	}
 
-	public function includeDocumentReadyJavascript()
+	public function includeDocReady()
 	{
 		?>
 		<script type="text/javascript">
@@ -317,12 +352,12 @@ class MetricPW extends WireData implements Module
 		<?php
 	}
 
-	public function docReady()
+	public function includeDocumentReadyJavascript()
 	{
-		$this->documentReadyJavascript();
+		$this->includeDocReady();
 	}
 
-	public function documentReadyJavascript()
+	public function docReady()
 	{
 		static $captureStarted = false;
 
@@ -339,6 +374,11 @@ class MetricPW extends WireData implements Module
 		);
 
 		$captureStarted = false;
+	}
+
+	public function documentReadyJavascript()
+	{
+		$this->docReady();
 	}
 
 	public function block($name)

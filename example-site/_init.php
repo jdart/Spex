@@ -1,13 +1,19 @@
 <?php
 
 /**
- * Set a default layout.
+ * Make the one-column layout the default.
  */
 
-// $metric->setLayout('default');
+$metric->setLayout('one-column');
 
 /**
- * Add a template variaible.
+ * The below makes the variable $homepage available in all templates.
  */
 
-// $metric->addTemplateVar('foo', 'bar');
+// $metric->addTemplateVar('homepage', $pages->get('/'));
+
+/**
+ * Force production/debug mode
+ */
+
+// $metric->setProductionMode(true);
