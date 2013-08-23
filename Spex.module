@@ -1,7 +1,7 @@
 <?php
 
 /**
- * ProcessWire Metric Marketing module
+ * Spex: An asset and template management module for the ProcessWire.
  * 
  * By Jonathan Dart
  * No Licence
@@ -9,22 +9,23 @@
  * http://metricmarketing.ca/blog/author/jonathan-dart
  *
  */
-class MetricPW extends WireData implements Module 
+class Spex extends WireData implements Module 
 {
 	protected 
 		$capturedJs = '',
 		$layout = 'default',
 		$templateVars = array(),
 		$developmentTld = '.dev',
-		$productionMode;
+		$productionMode,
+		$enableHelpers = true;
 
 	public static function getModuleInfo() 
 	{
 		return array(
-			'title' => 'MetricPW', 
+			'title' => 'Spex', 
 			'version' => 001, 
-			'summary' => 'Some tools used by metric marketing.',
-			'href' => 'https://github.com/jdart/MetricPW',
+			'summary' => 'An asset and template management module.',
+			'href' => 'https://github.com/jdart/Spex',
 			'singular' => true, 
 			'autoload' => true, 
 		);
@@ -63,6 +64,13 @@ class MetricPW extends WireData implements Module
 		$this->addHookBefore('TemplateFile::render', $this, 'templateFileBeforeRender');
 		$this->addHookBefore('Page::render', $this, 'pageBeforeRender');
 		$this->addHookAfter('Page::render', $this, 'pageAfterRender'); 
+
+		$this->config->scripts->add($config->urls->siteModules.'Spex/lib/jquery.js');
+	}
+
+	public function disableHelpers()
+	{
+		$this->enableHelpers = false;
 	}
 
 	public function templateFileBeforeRender($event)
@@ -85,11 +93,14 @@ class MetricPW extends WireData implements Module
 		extract($this->getTemplateVars());
 
 		$init_file = $this->config->paths->templates . '_init.php';
-		
+
 		$this->config->debug = !$this->isProductionMode();
 
 		if (is_file($init_file))		
 			require_once $init_file;
+
+		if ($this->enableHelpers)
+			require_once __DIR__.'/spex.php';		
 
 		$asset_file = $this->config->paths->templates . '_assets.php';
 
@@ -146,7 +157,7 @@ class MetricPW extends WireData implements Module
 	{
 		return array_merge(
 			fuel()->getArray(), 
-			array('metric' => $this),
+			array('spex' => $this, 'metric' => $this),
 			$this->templateVars
 		);
 	}
@@ -173,10 +184,12 @@ class MetricPW extends WireData implements Module
 	{
 		$config = $this->config;
 
-		$this->includeJavascripts(array(
-			'modernizr.js',
-			'jquery.js',
-		), $config->urls->siteModules.'MetricPW/lib/');
+		if ($this->isProductionMode())
+			echo '<script type="text/javascript">'.file_get_contents($config->paths->siteModules.'Spex/lib/modernizr.js').'</script>';
+		else 
+			$this->includeJavascripts(array(
+				'modernizr.js'
+			), $config->paths->siteModules.'Spex/lib/');
 	}
 
 	public function includeHeadJavascripts()
@@ -324,7 +337,7 @@ class MetricPW extends WireData implements Module
 				window.less = { env: "development" };
 			</script>	
 
-			<script type="text/javascript" src="<?php echo $this->config->urls->siteModules ?>MetricPW/lib/less.js"></script>
+			<script type="text/javascript" src="<?php echo $this->config->urls->siteModules ?>Spex/lib/less.js"></script>
 			<?php
 		}
 	}
@@ -381,7 +394,12 @@ class MetricPW extends WireData implements Module
 		$this->docReady();
 	}
 
-	public function block($name)
+	public function block()
+	{
+		call_user_func_array(array($this, 'partial'), func_get_args());
+	}
+
+	public function partial($name)
 	{
 		$path = sprintf('%s_%s.php', $this->config->paths->templates, $name);
 
