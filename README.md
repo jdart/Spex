@@ -6,9 +6,9 @@ Spex is an asset and template management module for the [ProcessWire CMS/CMF](ht
 
 This library was born out of a love of ProcessWire and the yucky feeling the use of a head.inc and foot.inc left in my mouth. The project makes use of [lessphp](http://leafo.net/lessphp/), [less.js](http://lesscss.org/), [jQuery](http://jquery.com/), [modernizr](http://modernizr.com/), [Minify](https://code.google.com/p/minify/) and the ProcessWire [Minify Module](http://modules.processwire.com/modules/minify/).
 
-* [Information about the author](http://spexmarketing.ca/jonathan-dart)
-* [Information about spex Marketing](http://spexmarketing.ca)
-* [The author's blog](http://spexmarketing.ca/blog/author/jonathan-dart)
+* [Information about the author](http://metricmarketing.ca/jonathan-dart)
+* [Information about Metric Marketing](http://metricmarketing.ca)
+* [The author's blog](http://metricmarketing.ca/blog/author/jonathan-dart)
 * [Learn more about ProcessWire](http://processwire.com)
 
 ## Installation
