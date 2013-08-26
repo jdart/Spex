@@ -149,8 +149,6 @@ Most of the helpers in Spex have functional equivalents. To enable the functiona
 
 `$spex->enableFunctionalHelpers();`
 
-The functional helpers are not available in _init.php.
-
 All the helper functions have the same signature as their equivalents documented above, i.e:
 
 `addScript('scripts/foo.js');`
