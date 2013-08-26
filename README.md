@@ -38,7 +38,7 @@ This file will have a variable `$layout_body` that has the output from the layou
 
 ### layout/one-column.php, layout/two-column.php, etc...
 
-Any file in the layout directory that is not base.php is considered a layout. If your site has one column and two column layout you might want to create one-column.php and two-column.php in your layout directory.
+Any file in the layout directory that is not _base.php is considered a layout. If your site has one column and two column layout you will want to create one-column.php and two-column.php in your layout directory.
 
 This file will have a variable `$template_output` available that has the output from your template (aka page render).
 
@@ -54,7 +54,7 @@ This file is run before the page render, this is the place to add global assets,
 
 ### addScript
 
-Spex assumes you want your script tags just before the `</body>` tag. You can add javascript files one at a time like the example code below.
+This function adds a JavaScript file to the page. Spex assumes you want your script tags just before the `</body>` tag. You can add javascript files one at a time like the example code below.
 
 `$spex->addScript('scripts/main.js');`
 
@@ -66,13 +66,13 @@ If the source files are outside of the template directory you'll need to pass a 
 
 `$spex->addScript('lib/main.js', $config->urls->siteModules.'Spex/'));`
 
-Adds a JavaScript file to the page.
-
 ### addStyle
+
+Spex can handle .less or .css files, to add one stylesheet to the page at a time use the below:
 
 `$spex->addStyle('styles/main.less');`
 
-Or a bunch at once:
+Or add a bunch at once:
 
 `$spex->addStyle(array('styles/main.less', 'styles/home.less'));`
 
@@ -90,7 +90,7 @@ You can set production mode explicitly, like the below, or you can let Spex gues
 
 ### addTemplateVar
 
-Make a variable available in templates:
+The template management of Spex means setting a variable in your template doesn't mean it will be available globally. Rather than setting global variables use this function to make a variable available in templates:
 
 `$spex->addTemplateVar('homepage', $pages->get('/'));`
 
@@ -110,11 +110,11 @@ To set a layout, call setLayout like the below:
 
 `$spex->setLayout('one-column');`
 
-That would result in the layout found at `templates/layout/one-column.php` being used.
+That would result in Spex using the layout found at `templates/layout/one-column.php` being used.
 
 ### partial
 
-Partials contain reusable fragments of html like a sidebar or toolbar, the convention for partial files is that they are prefixed with an an underscore (`_`) and are found in `templates/`, i.e. `templates/_sidebar.php`. To call the partial _sidebar.php you run the below:
+Partials contain reusable fragments of html like a sidebar or toolbar. The convention for partial files is that they are prefixed with an an underscore (`_`) and are found in `templates/`, i.e. `templates/_sidebar.php`. To call the partial _sidebar.php you write the below:
 
 `$spex->partial('sidebar');`
 
