@@ -397,11 +397,13 @@ class Spex extends WireData implements Module
 		call_user_func_array(array($this, 'partial'), func_get_args());
 	}
 
-	public function partial($name)
+	public function partial($name, $template_vars=array())
 	{
 		$path = sprintf('%s_%s.php', $this->config->paths->templates, $name);
 
-		extract($this->getTemplateVars());
+		$template_vars = array_merge($this->getTemplateVars(), $template_vars);
+
+		extract($template_vars);
 
 		if (is_file($path))
 			require $path;

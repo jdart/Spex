@@ -113,6 +113,12 @@ Partials contain reusable fragments of html like a sidebar or toolbar. The conve
 
 `$spex->partial('sidebar');`
 
+You can also pass an associative array to partial() to make additional variables available in the context of the partial, i.e.:
+
+`$spex->partial('sidebar', array('root' => $pages->find('/xyz/')));`
+
+Would make a variable `$root` available in _sidebar.php.
+
 ### includeStyles
 
 This draws out all your `<link>` tags, and is usually only found in the _base layout.
