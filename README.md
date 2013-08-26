@@ -148,7 +148,7 @@ Most of the helpers in Spex have functional equivalents. If you want to disable 
 
 `$spex->disableHelpers();`
 
-The helpers are not available in _init.php.
+The functional helpers are not available in _init.php.
 
 All the helper functions have the same signature as their equivalents documented above, i.e:
 
