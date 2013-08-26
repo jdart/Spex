@@ -27,7 +27,6 @@ Spex expects certain files to exist in your templates directory. You can find so
     + _base.php
     + one-column.php
     + ...
-* _assets.php
 * _init.php
 
 ### layout/_base.php
@@ -42,13 +41,9 @@ Any file in the layout directory that is not _base.php is considered a layout. I
 
 This file will have a variable `$template_output` available that has the output from your template (aka page render).
 
-### _assets.php
-
-This is the file where you add global css, less and javascript.
-
 ### _init.php
 
-This file is run before the page render, this is the place to set template variables and set a default layout.
+This file is run before the page render, this is the place to set template variables, set a default layout, and add global css, less and javascript.
 
 ## Helpers
 
@@ -68,7 +63,7 @@ If the source files are outside of the template directory you'll need to pass a 
 
 ### addStyle
 
-Spex can handle .less or .css files, to add one stylesheet to the page at a time use the below:
+Spex can handle .less or .css files. To add one stylesheet to the page at a time, use the below:
 
 `$spex->addStyle('styles/main.less');`
 
@@ -144,9 +139,9 @@ This draws out any JavaScript captured by docRead(), and is usually only found i
 
 ## Functional Helpers
 
-Most of the helpers in Spex have functional equivalents. If you want to disable these for reasons of name collisions, then in templates/_init.php set:
+Most of the helpers in Spex have functional equivalents. To enable the functional helpers, in your `templates/_init.php` set:
 
-`$spex->disableHelpers();`
+`$spex->enableFunctionalHelpers();`
 
 The functional helpers are not available in _init.php.
 

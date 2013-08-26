@@ -17,8 +17,7 @@ class Spex extends WireData implements Module
 		$templateVars = array(),
 		$developmentTld = '.dev',
 		$productionMode,
-		$baseLayout = '_base',
-		$enableHelpers = true;
+		$baseLayout = '_base';
 
 	public static function getModuleInfo() 
 	{
@@ -39,7 +38,6 @@ class Spex extends WireData implements Module
 		$this->createDir($tpl_dir.'layout');
 		$this->copyFile(__DIR__.'/example-site/layout/_base.php', $tpl_dir.'layout/_base.php');
 		$this->copyFile(__DIR__.'/example-site/layout/one-column.php', $tpl_dir.'layout/one-column.php');
-		$this->copyFile(__DIR__.'/example-site/_assets.php', $tpl_dir.'_assets.php');
 		$this->copyFile(__DIR__.'/example-site/_init.php', $tpl_dir.'_init.php');
 	}
 
@@ -69,9 +67,9 @@ class Spex extends WireData implements Module
 		$this->config->scripts->add($this->config->urls->siteModules.'Spex/lib/jquery.js');
 	}
 
-	public function disableHelpers()
+	public function enableFunctionalHelpers()
 	{
-		$this->enableHelpers = false;
+		require_once __DIR__.'/spex.php';
 	}
 
 	public function templateFileBeforeRender($event)
@@ -91,22 +89,14 @@ class Spex extends WireData implements Module
 		if ($this->pageIsAdmin($event->object))
 			return;
 
+		$this->setProductionMode(strpos($this->config->httpHost, $this->developmentTld) === false);
+
 		extract($this->getTemplateVars());
 
 		$init_file = $this->config->paths->templates . '_init.php';
 
-		$this->config->debug = !$this->isProductionMode();
-
 		if (is_file($init_file))		
 			require_once $init_file;
-
-		if ($this->enableHelpers)
-			require_once __DIR__.'/spex.php';		
-
-		$asset_file = $this->config->paths->templates . '_assets.php';
-
-		if (is_file($asset_file))		
-			require_once $asset_file;
 	}
 
 	public function pageAfterRender($event)
@@ -176,14 +166,13 @@ class Spex extends WireData implements Module
 	public function setProductionMode($bool)
 	{
 		$this->productionMode = $bool;
+
+		$this->config->debug = !$bool;
 	}
 
 	public function isProductionMode()
 	{
-		if (isset($this->productionMode))
-			return $this->productionMode;
-
-		return strpos($this->config->httpHost, $this->developmentTld) === false;
+		return (bool)$this->productionMode;
 	}
 
 	public function includeHeadScripts()
