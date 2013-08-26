@@ -28,11 +28,6 @@ function addTemplateVar() {
 	return call_user_func_array(array(spex(), __METHOD__), func_get_args());
 }
 
-function setProductionMode() {
-
-	return call_user_func_array(array(spex(), __METHOD__), func_get_args());
-}
-
 function includeHeadScripts() {
 
 	return call_user_func_array(array(spex(), __METHOD__), func_get_args());

@@ -48,7 +48,7 @@ This is the file where you add global css, less and javascript.
 
 ### _init.php
 
-This file is run before the page render, this is the place to add global assets, set template variables and set a default layout.
+This file is run before the page render, this is the place to set template variables and set a default layout.
 
 ## Helpers
 
@@ -144,9 +144,11 @@ This draws out any JavaScript captured by docRead(), and is usually only found i
 
 ## Functional Helpers
 
-Most of class methods of spex have functional equivalents. If you want to disable these for reasons of name collisions, then in template/_init.php set:
+Most of the helpers in Spex have functional equivalents. If you want to disable these for reasons of name collisions, then in templates/_init.php set:
 
 `$spex->disableHelpers();`
+
+The helpers are not available in _init.php.
 
 All the helper functions have the same signature as their equivalents documented above, i.e:
 
@@ -160,12 +162,11 @@ The list of functional helpers are below:
 
 * addScript
 * docReady
+* addStyle
+* includeStyles
+* addTemplateVar
+* partial
+* setLayout
 * includeScripts
 * includeHeadScripts
 * includeDocReady
-* addStyle
-* includeStyles
-* setProductionMode
-* addTemplateVar
-* setLayout
-* partial
