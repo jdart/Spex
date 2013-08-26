@@ -30,6 +30,7 @@ Spex expects certain files to exist in your templates directory. You can find so
     + one-column.php
     + ...
 * _assets.php
+* _init.php
 
 #### layout/base.php
 
@@ -47,21 +48,25 @@ This file will have a variable $template_output available that has the output fr
 
 This is the file where you add global css, less and javascript.
 
+#### _init.php
+
+This file is run before the page render, this is the place to add global assets, set template variables and set a default layout.
+
 ### Asset Management
 
 Spex assumes you want your script tags just before the `</body>` tag. You can add javascript files one at a time like the example code below.
 
-`$spex->addJavascript('scripts/main.js')`
+`$spex->addScript('scripts/main.js')`
 
 Or a bunch at once:
 
-`$spex->addJavascript(array('scripts/main.js', 'scripts/another.js'))`
+`$spex->addScript(array('scripts/main.js', 'scripts/another.js'))`
 
 If the source files are outside of the template directory you'll need to pass a second parameter to addJavascript like the below:
 
-`$spex->addJavascript('lib/main.js', $config->urls->siteModules.'Spex/'))`
+`$spex->addScript('lib/main.js', $config->urls->siteModules.'Spex/'))`
 
-The addStylesheet function works in the same way and accepts .less files and .css files.
+The addStyle function works in the same way and accepts .less files and .css files.
 
 #### Production Mode
 
