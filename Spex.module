@@ -146,7 +146,7 @@ class Spex extends WireData implements Module
 
 	public function setBaseLayout($baseLayout)
 	{
-		$this->baseLayout = $baseLayout
+		$this->baseLayout = $baseLayout;
 	}
 
 	public function getLayout()
