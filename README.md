@@ -19,9 +19,7 @@ These steps assume you have ProcessWire installed.
 * Clone this repo in your site's modules directory
 * [Install the module](http://modules.processwire.com/install-uninstall/)
 
-## Usage
-
-### Files
+## File Struture
 
 Spex expects certain files to exist in your templates directory. You can find some boilerplate code in the example-site directory.
 
@@ -32,65 +30,131 @@ Spex expects certain files to exist in your templates directory. You can find so
 * _assets.php
 * _init.php
 
-#### layout/_base.php
+### layout/_base.php
 
 This file is responsible for outputting the html, head, body, link (css) and script (js) tags.
 
-This file will have a variable $layout_body that has the output from the layout.
+This file will have a variable `$layout_body` that has the output from the layout.
 
-#### layout/one-column.php, layout/two-column.php, etc...
+### layout/one-column.php, layout/two-column.php, etc...
 
 Any file in the layout directory that is not base.php is considered a layout. If your site has one column and two column layout you might want to create one-column.php and two-column.php in your layout directory.
 
-This file will have a variable $template_output available that has the output from your template (aka page render).
+This file will have a variable `$template_output` available that has the output from your template (aka page render).
 
-#### _assets.php
+### _assets.php
 
 This is the file where you add global css, less and javascript.
 
-#### _init.php
+### _init.php
 
 This file is run before the page render, this is the place to add global assets, set template variables and set a default layout.
 
-### Asset Management
+## Helpers
+
+### addScript
 
 Spex assumes you want your script tags just before the `</body>` tag. You can add javascript files one at a time like the example code below.
 
-`$spex->addScript('scripts/main.js')`
+`$spex->addScript('scripts/main.js');`
 
 Or a bunch at once:
 
-`$spex->addScript(array('scripts/main.js', 'scripts/another.js'))`
+`$spex->addScript(array('scripts/main.js', 'scripts/another.js'));`
 
-If the source files are outside of the template directory you'll need to pass a second parameter to addJavascript like the below:
+If the source files are outside of the template directory you'll need to pass a second parameter to addScript like the below:
 
-`$spex->addScript('lib/main.js', $config->urls->siteModules.'Spex/'))`
+`$spex->addScript('lib/main.js', $config->urls->siteModules.'Spex/'));`
 
-The addStyle function works in the same way and accepts .less files and .css files.
+Adds a JavaScript file to the page.
 
-#### Production Mode
+### addStyle
+
+`$spex->addStyle('styles/main.less');`
+
+Or a bunch at once:
+
+`$spex->addStyle(array('styles/main.less', 'styles/home.less'));`
+
+If the source files are outside of the template directory you'll need to pass a second parameter to addStyle like the below:
+
+`$spex->addStyle('lib/main.less', $config->urls->siteModules.'Spex/'));`
+
+### setProductionMode
 
 Spex gives you two modes of operation, production and development (not production). Assets are concatenated and minified when in production mode, when not in production mode they are served as-is.
 
 You can set production mode explicitly, like the below, or you can let Spex guess which mode to use based on whether the httpHost uses a top level domain of .dev or not.
 
-`$spex->setProduction(true)`
+`$spex->setProductionMode(true);`
 
-#### Deferring Inline JavaScript
+### addTemplateVar
 
-If you want some JavaScript in your template that should execute after the JavaScript from _assets.php are included, then use the docReady helper.
+Make a variable available in templates:
+
+`$spex->addTemplateVar('homepage', $pages->get('/'));`
+
+### docReady
+
+If you have some JavaScript in your template, you'll want to wrap it in a docReady() like below.
 
     <?php $spex->docReady() ?>
-	    <script>$('#bx-me').bxSlider()</script>
+        <script>$('#bx-me').bxSlider();</script>
     <?php $spex->docReady() ?>
 
-The JavaScript will be wrapped in a `$(document).ready(function(){...})` and found just before the `</body>` tag. 
+The JavaScript will be wrapped in a `$(document).ready(function(){...});` and found just before the `</body>` tag. 
 
-### Functional Helpers
+### setLayout
+
+To set a layout, call setLayout like the below:
+
+`$spex->setLayout('one-column');`
+
+That would result in the layout found at `templates/layout/one-column.php` being used.
+
+### partial
+
+Partials contain reusable fragments of html like a sidebar or toolbar, the convention for partial files is that they are prefixed with an an underscore (`_`) and are found in `templates/`, i.e. `templates/_sidebar.php`. To call the partial _sidebar.php you run the below:
+
+`$spex->partial('sidebar');`
+
+### includeStyles
+
+This draws out all your `<link>` tags, and is usually only found in the _base layout.
+
+`$spex->includeStyles();`
+
+### includeScripts
+
+This draws out all your `<script>` tags, and is usually only found in the _base layout.
+
+`$spex->includeScripts();`
+
+### includeHeadScripts
+
+This draws any `<script>` tags that should appear in the document head, and is usually only found in the _base layout.
+
+`$spex->includeHeadScripts();`
+
+### includeDocReady
+
+This draws out any JavaScript captured by docRead(), and is usually only found in the _base layout.
+
+`$spex->includeDocReady();`
+
+## Functional Helpers
 
 Most of class methods of spex have functional equivalents. If you want to disable these for reasons of name collisions, then in template/_init.php set:
 
-`$spex->disableHelpers()`
+`$spex->disableHelpers();`
+
+All the helper functions have the same signature as their equivalents documented above, i.e:
+
+`addScript('scripts/foo.js');`
+
+is equivalent to the below:
+
+`$spex->addScript('scripts/foo.js');`
 
 The list of functional helpers are below: 
 
