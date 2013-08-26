@@ -26,13 +26,13 @@ These steps assume you have ProcessWire installed.
 Spex expects certain files to exist in your templates directory. You can find some boilerplate code in the example-site directory.
 
 * layout (directory)
-    + base.php
+    + _base.php
     + one-column.php
     + ...
 * _assets.php
 * _init.php
 
-#### layout/base.php
+#### layout/_base.php
 
 This file is responsible for outputting the html, head, body, link (css) and script (js) tags.
 

@@ -17,6 +17,7 @@ class Spex extends WireData implements Module
 		$templateVars = array(),
 		$developmentTld = '.dev',
 		$productionMode,
+		$baseLayout = '_base',
 		$enableHelpers = true;
 
 	public static function getModuleInfo() 
@@ -36,7 +37,7 @@ class Spex extends WireData implements Module
 		$tpl_dir = $this->config->paths->templates;
 
 		$this->createDir($tpl_dir.'layout');
-		$this->copyFile(__DIR__.'/example-site/layout/base.php', $tpl_dir.'layout/base.php');
+		$this->copyFile(__DIR__.'/example-site/layout/_base.php', $tpl_dir.'layout/_base.php');
 		$this->copyFile(__DIR__.'/example-site/layout/one-column.php', $tpl_dir.'layout/one-column.php');
 		$this->copyFile(__DIR__.'/example-site/_assets.php', $tpl_dir.'_assets.php');
 		$this->copyFile(__DIR__.'/example-site/_init.php', $tpl_dir.'_init.php');
@@ -121,7 +122,7 @@ class Spex extends WireData implements Module
 
 		extract($this->getTemplateVars());		
 
-		if ($this->layout === 'base') { // skip the layout
+		if ($this->layout === $this->baseLayout) { // skip the layout
 
 			$layout_body = $template_output;
 			
@@ -134,13 +135,18 @@ class Spex extends WireData implements Module
 
 		// wrap layout output with base layout (head and assets stuff)
 		ob_start();
-		require $config->paths->templates.'layout/base.php';
+		require $config->paths->templates.'layout/'.$this->baseLayout.'.php';
 		$event->return = ob_get_clean();
 	}
 
 	public function setLayout($layout)
 	{
 		$this->layout = $layout;
+	}
+
+	public function setBaseLayout($baseLayout)
+	{
+		$this->baseLayout = $baseLayout
 	}
 
 	public function getLayout()
