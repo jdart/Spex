@@ -13,12 +13,12 @@
 			<meta name="description" content="<?php echo $page->summary ?>" />
 		<?php endif ?>
 
-		<?php $metric->includeStyles() ?>
+		<?php $spex->includeStyles() ?>
 		
-		<?php $metric->includeHeadScripts() ?>
+		<?php $spex->includeHeadScripts() ?>
 
 	</head>
-	<body class="<?php echo "template-$page->template section-{$page->rootParent->name} page-$page layout-{$metric->getLayout()}" ?>">
+	<body class="<?php echo "template-$page->template section-{$page->rootParent->name} page-$page layout-{$spex->getLayout()}" ?>">
 
 		<?php echo $layout_body ?>
 
@@ -26,9 +26,9 @@
 			<a class="nav" id="editpage" href="<?php echo $config->urls->admin ?>page/edit/?id=<?php echo $page->id ?>">Edit</a>
 		<?php endif ?>
 
-		<?php $metric->includeScripts() ?>
+		<?php $spex->includeScripts() ?>
 
-		<?php $metric->includeDocReady() ?>
+		<?php $spex->includeDocReady() ?>
 
 	</body>
 </html>

@@ -4,10 +4,10 @@
  * Add some assets. jQuery and modernizr are already taken care of.
  */
 
-// $metric->addScript(array(
+// $spex->addScript(array(
 // 	'scripts/main.js',
 // ));
 
-// $metric->addStyle(array(
+// $spex->addStyle(array(
 // 	'styles/main.less',
 // ));

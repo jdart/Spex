@@ -6,7 +6,7 @@ function spex() {
 }
 
 /**
- * Identical to $metric->includeScript();
+ * Identical to $spex->includeScript();
  */
 function includeScripts() {
 
