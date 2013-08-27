@@ -67,7 +67,7 @@ class Spex extends WireData implements Module
 		$this->config->scripts->add($this->config->urls->siteModules.'Spex/lib/jquery.js');
 	}
 
-	public function enableFunctionalHelpers()
+	public function enableProceduralHelpers()
 	{
 		require_once __DIR__.'/spex.php';
 	}

@@ -145,9 +145,9 @@ This draws out any JavaScript captured by docRead(), and is usually only found i
 
 ## Functional Helpers
 
-Most of the helpers in Spex have functional equivalents. To enable the functional helpers, in your `templates/_init.php` set:
+Most of the class methods of the Spex class have procedural equivalents. To enable the procedural helpers, in your `templates/_init.php` set:
 
-`$spex->enableFunctionalHelpers();`
+`$spex->enableProceduralHelpers();`
 
 All the helper functions have the same signature as their equivalents documented above, i.e:
 
@@ -157,7 +157,7 @@ is equivalent to the below:
 
 `$spex->addScript('scripts/foo.js');`
 
-The list of functional helpers are below: 
+The list of procedural helpers are below: 
 
 * addScript
 * docReady

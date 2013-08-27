@@ -4,7 +4,7 @@
  * Turn on the functional helpers.
  */
 
-$spex->enableFunctionalHelpers();
+$spex->enableProceduralHelpers();
 
 /**
  * Make the one-column layout the default.
