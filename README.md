@@ -143,7 +143,7 @@ This draws out any JavaScript captured by docRead(), and is usually only found i
 
 `$spex->includeDocReady();`
 
-## Functional Helpers
+## Procedural Helpers
 
 Most of the class methods of the Spex class have procedural equivalents. To enable the procedural helpers, in your `templates/_init.php` set:
 
