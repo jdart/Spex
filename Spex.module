@@ -83,10 +83,19 @@ class Spex extends WireData implements Module
 		return $page->rootParent->id == $this->config->adminRootPageID;
 	}
 
+	public function pageIsFormBuilder($page)
+	{
+		return $page->rootParent->id == 1017;
+	}
+
+	public function isActiveForPage($page)
+	{
+		return !$this->pageIsAdmin($page) && !$this->pageIsFormBuilder($page);
+	}
+
 	public function pageBeforeRender($event)
 	{
-		// Make sure this page isn't an admin page
-		if ($this->pageIsAdmin($event->object))
+		if (!$this->isActiveForPage($event->object))
 			return;
 
 		$this->setProductionMode(strpos($this->config->httpHost, $this->developmentTld) === false);
@@ -101,8 +110,7 @@ class Spex extends WireData implements Module
 
 	public function pageAfterRender($event)
 	{
-		// Make sure this page isn't an admin page
-		if ($this->pageIsAdmin($event->object))
+		if (!$this->isActiveForPage($event->object))
 			return;
 
 		if (!$this->layout)
