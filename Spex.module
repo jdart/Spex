@@ -83,10 +83,21 @@ class Spex extends WireData implements Module
 		return $page->rootParent->id == $this->config->adminRootPageID;
 	}
 
+	public function pageIsFormBuilder($page)
+	{
+		$form_builder = $this->pages->get('template=form-builder');
+
+		return $form_builder && $page->rootParent->id == $form_builder->id;
+	}
+
+	public function isActiveForPage($page)
+	{
+		return !$this->pageIsAdmin($page) && !$this->pageIsFormBuilder($page);
+	}
+
 	public function pageBeforeRender($event)
 	{
-		// Make sure this page isn't an admin page
-		if ($this->pageIsAdmin($event->object))
+		if (!$this->isActiveForPage($event->object))
 			return;
 
 		$this->setProductionMode(strpos($this->config->httpHost, $this->developmentTld) === false);
@@ -101,8 +112,7 @@ class Spex extends WireData implements Module
 
 	public function pageAfterRender($event)
 	{
-		// Make sure this page isn't an admin page
-		if ($this->pageIsAdmin($event->object))
+		if (!$this->isActiveForPage($event->object))
 			return;
 
 		if (!$this->layout)
@@ -349,7 +359,14 @@ class Spex extends WireData implements Module
 	{
 		require_once __DIR__.'/lib/lessphp/lessc.inc.php';
 
-		return new lessc;
+		$less = new lessc;
+
+		$less->setImportDir(array(
+			$this->config->paths->templates, 
+			$this->config->paths->templates.'styles/'
+		));
+
+		return $less;
 	}
 
 	public function includeDocReady()
