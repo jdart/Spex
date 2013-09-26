@@ -139,13 +139,13 @@ There is also a variable $slot available should you prefer to use it directly.
 
 ### captureSlot
 
-You can use the captureSlot helper to store a slot for later:
+You can use the captureSlot helper to capture some output, so you don't have to build a string and pass it to slot().
 
     $spex->captureSlot(); // Starts the capture ?>
 
     <p>Sidebar</p>
 
-    <?php $spex->captureSlot('sidebar_content'); // Finishes the capture`
+    <?php $spex->captureSlot('sidebar_content'); // Finishes the capture
 
 ### addImage
 
@@ -207,3 +207,7 @@ The list of procedural helpers are below:
 * includeScripts
 * includeHeadScripts
 * includeDocReady
+* addImage
+* slot
+* hasSlot
+* captureSlot
