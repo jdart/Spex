@@ -17,7 +17,9 @@ class Spex extends WireData implements Module
 		$templateVars = array(),
 		$developmentTld = '.dev',
 		$productionMode,
-		$baseLayout = '_base';
+		$baseLayout = '_base',
+		$slots = array(),
+		$images = array();
 
 	public static function getModuleInfo() 
 	{
@@ -164,6 +166,7 @@ class Spex extends WireData implements Module
 		return array_merge(
 			fuel()->getArray(), 
 			array('spex' => $this, 'metric' => $this),
+			array('slots' => $this->slots),
 			$this->templateVars
 		);
 	}
@@ -195,6 +198,10 @@ class Spex extends WireData implements Module
 			$this->includeJavascripts(array(
 				'modernizr.js'
 			), $config->urls->siteModules.'Spex/lib/');
+
+		echo <<<JS
+<script>(function(){var method;var noop=function(){};var methods=['assert','clear','count','debug','dir','dirxml','error','exception','group','groupCollapsed','groupEnd','info','log','markTimeline','profile','profileEnd','table','time','timeEnd','timeStamp','trace','warn'];var length=methods.length;var console=(window.console=window.console||{});while(length--){method=methods[length];if(!console[method]){console[method]=noop}}}());</script>
+JS;
 	}
 
 	public function includeHeadJavascripts()
@@ -369,12 +376,23 @@ class Spex extends WireData implements Module
 		return $less;
 	}
 
+	public function addImage($src)
+	{
+		$this->images[] = $src;
+		return $src;
+	}
+
 	public function includeDocReady()
 	{
 		?>
 		<script type="text/javascript">
 			jQuery(function(){
 				<?php echo $this->capturedJs ?>
+			});
+			$(window).load(function(){
+				$(<?php echo json_encode($this->images) ?>).each(function(){
+					$('<img/>')[0].src = this;
+    			});
 			});
 		</script>
 		<?php
@@ -422,7 +440,43 @@ class Spex extends WireData implements Module
 
 		extract($template_vars);
 
-		if (is_file($path))
+		if (is_file($path)) {
+			ob_start();
 			require $path;
+			return ob_get_clean();
+		}
+
+		return '';
+	}
+
+	public function slot($name, $value=null)
+	{
+		if (is_null($value)) {
+			if ($this->hasSlot($name))
+				return $this->slots[$name];
+			return false;
+		}
+
+		$this->slots[$name] = $value;
+	}
+
+	public function hasSlot($name)
+	{
+		return isset($this->slots[$name]);
+	}
+
+	public function captureSlot($name=null)
+	{
+		static $captureStarted = false;
+
+		if (empty($captureStarted)) { 
+			$captureStarted = true;
+			ob_start();
+			return;
+		}
+
+		$this->slots[$name] = ob_get_clean();
+
+		$captureStarted = false;
 	}
 }

@@ -57,3 +57,23 @@ function docReady() {
 
 	return call_user_func_array(array(spex(), __METHOD__), func_get_args());
 }
+
+function hasSlot() {
+
+	return call_user_func_array(array(spex(), __METHOD__), func_get_args());
+}
+
+function slot() {
+
+	return call_user_func_array(array(spex(), __METHOD__), func_get_args());
+}
+
+function catpureSlot() {
+
+	return call_user_func_array(array(spex(), __METHOD__), func_get_args());
+}
+
+function addImage() {
+
+	return call_user_func_array(array(spex(), __METHOD__), func_get_args());
+}

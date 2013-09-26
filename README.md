@@ -119,6 +119,44 @@ You can also pass an associative array to partial() to make additional variables
 
 Would make a variable `$root` available in _sidebar.php.
 
+### slot / hasSlot
+
+Slots are a way to store a string or value to be used later, perhaps to set a sidebar content or to indicate that a login button should not be shown.
+
+`$spex->slot('sidebar_content', '<p>Sidebar</p>')`
+
+To echo the contents of a slot:
+
+`echo $spex->slot('sidebar_content')`
+
+You can check for the existance of a slot with `hasSlot`:
+
+`if (hasSlot('sidebar_content'))`
+
+There is also a variable $slot available should you prefer to use it directly.
+
+`echo empty($slot['sidebar_content']) ? '' : $slot['sidebar_content'];`
+
+### captureSlot
+
+You can use the captureSlot helper to store a slot for later:
+
+    $spex->captureSlot(); // Starts the capture ?>
+
+    <p>Sidebar</p>
+
+    <?php $spex->captureSlot('sidebar_content'); // Finishes the capture`
+
+### addImage
+
+This helper is used to preload an image, it also happens to return whatever is passed to it. 
+
+`$spex->addImage('big-background.png')`
+
+or 
+
+`<div style="background-image: url(<?php echo $spex->addImage('big-background.png') ?>);"></div>`
+
 ### includeStyles
 
 This draws out all your `<link>` tags, and is usually only found in the _base layout.
