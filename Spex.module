@@ -392,7 +392,7 @@ JS;
 			$(window).load(function(){
 				$(<?php echo json_encode($this->images) ?>).each(function(){
 					$('<img/>')[0].src = this;
-    			});
+				});
 			});
 		</script>
 		<?php
