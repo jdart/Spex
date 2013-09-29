@@ -99,6 +99,10 @@ If you have some JavaScript in your template, you'll want to wrap it in a docRea
 
 The JavaScript will be wrapped in a `$(document).ready(function(){...});` and found just before the `</body>` tag. 
 
+docReady can also take a string parameter if you want to just pass it some javascript.
+
+`docReady('console.log("hey there!")');`
+
 ### setLayout
 
 To set a layout, call setLayout like the below:
