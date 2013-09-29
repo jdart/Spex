@@ -26,7 +26,7 @@ class Spex extends WireData implements Module
 	{
 		return array(
 			'title' => 'Spex', 
-			'version' => 11, 
+			'version' => 12, 
 			'summary' => 'An asset and template management module.',
 			'href' => 'https://github.com/jdart/Spex',
 			'singular' => true, 
@@ -395,7 +395,7 @@ JS;
 					$('<img/>')[0].src = src;
 				});
 				$.each(<?php echo json_encode($this->lateLoad) ?>, function(id, html){
-					$('#'+id).html(html);
+					$('#'+id).replaceWith(html);
 				});
 			});
 		</script>
@@ -407,9 +407,14 @@ JS;
 		$this->includeDocReady();
 	}
 
-	public function docReady()
+	public function docReady($js=null)
 	{
 		static $captureStarted = false;
+
+		if (!is_null($js)) {
+			$this->capturedJs .= ';'.$js;
+			return;
+		}
 
 		if (empty($captureStarted)) { 
 			$captureStarted = true;
