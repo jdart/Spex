@@ -19,13 +19,14 @@ class Spex extends WireData implements Module
 		$productionMode,
 		$baseLayout = '_base',
 		$slots = array(),
-		$images = array();
+		$images = array(),
+		$lateLoad = array();
 
 	public static function getModuleInfo() 
 	{
 		return array(
 			'title' => 'Spex', 
-			'version' => 10, 
+			'version' => 11, 
 			'summary' => 'An asset and template management module.',
 			'href' => 'https://github.com/jdart/Spex',
 			'singular' => true, 
@@ -390,8 +391,11 @@ JS;
 				<?php echo $this->capturedJs ?>
 			});
 			$(window).load(function(){
-				$(<?php echo json_encode($this->images) ?>).each(function(){
-					$('<img/>')[0].src = this;
+				$.each(<?php echo json_encode($this->images) ?>, function(i, src){
+					$('<img/>')[0].src = src;
+				});
+				$.each(<?php echo json_encode($this->lateLoad) ?>, function(id, html){
+					$('#'+id).html(html);
 				});
 			});
 		</script>
@@ -476,6 +480,25 @@ JS;
 		}
 
 		$this->slots[$name] = ob_get_clean();
+
+		$captureStarted = false;
+	}
+
+	public function lateLoad()
+	{
+		static $captureStarted = false;
+
+		if (empty($captureStarted)) { 
+			$captureStarted = true;
+			ob_start();
+			return;
+		}
+
+		$key = 'late-load-'.count($this->lateLoad);
+
+		$this->lateLoad[$key] = ob_get_clean();
+
+		echo '<div id="'.$key.'"></div>';
 
 		$captureStarted = false;
 	}

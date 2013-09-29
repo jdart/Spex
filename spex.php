@@ -77,3 +77,8 @@ function addImage() {
 
 	return call_user_func_array(array(spex(), __METHOD__), func_get_args());
 }
+
+function lateLoad() {
+
+	return call_user_func_array(array(spex(), __METHOD__), func_get_args());
+}

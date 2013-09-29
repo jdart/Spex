@@ -1,4 +1,4 @@
-# Spex 0.1.0
+# Spex 0.1.1
 
 ## About Spex
 
@@ -181,6 +181,17 @@ This draws out any JavaScript captured by docRead(), and is usually only found i
 
 `$spex->includeDocReady();`
 
+### lateLoad
+
+This captures html and sets it up to be the last thing loaded on the page. You'd want to use this for third party code like social sharing code or ads.
+
+    lateLoad(); ?>
+
+        <div class="addthis_toolbox addthis_default_style"></div>
+        <script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js#pubid=xa-52321d124fb4535d"></script>
+
+    <?php lateLoad();
+
 ## Procedural Helpers
 
 Most of the class methods of the Spex class have procedural equivalents. To enable the procedural helpers, in your `templates/_init.php` set:
@@ -211,3 +222,4 @@ The list of procedural helpers are below:
 * slot
 * hasSlot
 * captureSlot
+* lateLoad
