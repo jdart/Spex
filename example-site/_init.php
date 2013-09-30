@@ -19,12 +19,6 @@ $spex->setLayout('one-column');
 // $spex->addTemplateVar('homepage', $pages->get('/'));
 
 /**
- * Force production/debug mode
- */
-
-// $spex->setProductionMode(true);
-
-/**
  * Add some assets. jQuery and modernizr are already taken care of.
  */
 

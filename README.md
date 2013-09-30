@@ -75,14 +75,6 @@ If the source files are outside of the template directory you'll need to pass a 
 
 `$spex->addStyle('lib/main.less', $config->urls->siteModules.'Spex/'));`
 
-### setProductionMode
-
-Spex gives you two modes of operation, production and development (not production). Assets are concatenated and minified when in production mode, when not in production mode they are served as-is.
-
-You can set production mode explicitly, like the below, or you can let Spex guess which mode to use based on whether the httpHost uses a top level domain of .dev or not.
-
-`$spex->setProductionMode(true);`
-
 ### addTemplateVar
 
 The template management of Spex means setting a variable in your template doesn't mean it will be available globally. Rather than setting global variables use this function to make a variable available in templates:

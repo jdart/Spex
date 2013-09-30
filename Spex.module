@@ -15,8 +15,6 @@ class Spex extends WireData implements Module
 		$capturedJs = '',
 		$layout = 'default',
 		$templateVars = array(),
-		$developmentTld = '.dev',
-		$productionMode,
 		$baseLayout = '_base',
 		$slots = array(),
 		$images = array(),
@@ -76,10 +74,8 @@ class Spex extends WireData implements Module
 
 	public function templateFileRenderBefore($event)
 	{
-		if (!$this->isActiveForPage($event->object))
+		if (!$this->isActiveForPage($this->page))
 			return;
-
-		$this->setProductionMode(strpos($this->config->httpHost, $this->developmentTld) === false);
 
 		extract($this->getTemplateVars());
 
@@ -171,23 +167,6 @@ class Spex extends WireData implements Module
 		);
 	}
 
-	public function setDevelopmentTld($tld)
-	{
-		$this->developmentTld = $tld;
-	}
-
-	public function setProductionMode($bool)
-	{
-		$this->productionMode = $bool;
-
-		$this->config->debug = !$bool;
-	}
-
-	public function isProductionMode()
-	{
-		return (bool)$this->productionMode;
-	}
-
 	public function includeHeadScripts()
 	{
 		$config = $this->config;
@@ -232,7 +211,7 @@ JS;
 			foreach ($javascripts as &$js)
 				$js = $root.$js;
 
-		if ($this->isProductionMode()) {
+		if ($this->config->debug) {
 
 			?>
 			<script 
@@ -317,7 +296,7 @@ JS;
 			foreach ($stylesheets as &$style)
 				$style = $root.$style;
 
-		if ($this->isProductionMode()) {
+		if ($this->config->debug) {
 
 			foreach ($stylesheets as &$stylesheet)
 				$stylesheet = $this->compileStyle($stylesheet);
