@@ -204,7 +204,7 @@ JS;
 			foreach ($javascripts as &$js)
 				$js = $root.$js;
 
-		if ($this->config->debug) {
+		if ( ! $this->config->debug) {
 
 			?>
 			<script 
@@ -287,7 +287,7 @@ JS;
 			foreach ($stylesheets as &$style)
 				$style = $root.$style;
 
-		if ($this->config->debug) {
+		if ( ! $this->config->debug) {
 
 			foreach ($stylesheets as &$stylesheet)
 				$stylesheet = $this->compileStyle($stylesheet);

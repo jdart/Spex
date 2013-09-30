@@ -61,6 +61,10 @@ If the source files are outside of the template directory you'll need to pass a 
 
 `$spex->addScript('lib/main.js', $config->urls->siteModules.'Spex/'));`
 
+If you want to add scripts that are not on the same server as your PW site, the second parameter should be false:
+
+`$spex->addScript('http://code.jquery.com/jquery-1.10.1.min.js', false);`
+
 ### addStyle
 
 Spex can handle .less or .css files. To add one stylesheet to the page at a time, use the below:
