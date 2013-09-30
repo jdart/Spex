@@ -24,7 +24,7 @@ class Spex extends WireData implements Module
 	{
 		return array(
 			'title' => 'Spex', 
-			'version' => 13, 
+			'version' => 20, 
 			'summary' => 'An asset and template management module.',
 			'href' => 'https://github.com/jdart/Spex',
 			'singular' => true, 
@@ -178,11 +178,6 @@ class Spex extends WireData implements Module
 JS;
 	}
 
-	public function includeHeadJavascripts()
-	{
-		$this->includeHeadScripts();
-	}
-
 	public function addScript($input, $root=null)
 	{
 		if (!is_array($input))
@@ -195,17 +190,15 @@ JS;
 			$this->config->scripts->add($root.$js);
 	}
 
-	public function addJavascript($input, $root=null) 
-	{
-		$this->addScript($input, $root);
-	}
-
 	public function includeScripts(array $javascripts=null, $root=null)
 	{
 		$config = $this->config;
+		$docReady = false;
 
-		if (is_null($javascripts))
+		if (is_null($javascripts)) {
 			$javascripts = $this->config->scripts->getIterator()->getArrayCopy();
+			$docReady = true;
+		}
 
 		if (!is_null($root))
 			foreach ($javascripts as &$js)
@@ -230,11 +223,9 @@ JS;
 				<script type="text/javascript" src="<?php echo $javascript ?>"></script>
 			<?php endforeach;
 		}
-	}
-
-	public function includeJavascripts(array $javascripts=null, $root=null)
-	{
-		$this->includeScripts($javascripts, $root);
+		
+		if ($docReady)
+			$this->includeDocReady();
 	}
 
 	public function addStyle($input, $root=null)
@@ -331,11 +322,6 @@ JS;
 		}
 	}
 
-	public function includeStylesheets(array $stylesheets=null, $root=null)
-	{
-		$this->includeStyles($stylesheets, $roots);
-	}
-
 	public function getLessc()
 	{
 		require_once __DIR__.'/lib/lessphp/lessc.inc.php';
@@ -375,11 +361,6 @@ JS;
 		<?php
 	}
 
-	public function includeDocumentReadyJavascript()
-	{
-		$this->includeDocReady();
-	}
-
 	public function docReady($js=null)
 	{
 		static $captureStarted = false;
@@ -395,23 +376,13 @@ JS;
 			return;
 		}
 
-		$this->capturedJs .= ';' . str_replace(
-			array('<script>', '<script type="text/javascript">', '</script>'), 
+		$this->capturedJs .= ';' . str_ireplace(
+			array('<script>', '<script type="text/javascript">', '</script>', "<script type='text/javascript'>"), 
 			'', 
 			ob_get_clean()
 		);
 
 		$captureStarted = false;
-	}
-
-	public function documentReadyJavascript()
-	{
-		$this->docReady();
-	}
-
-	public function block()
-	{
-		call_user_func_array(array($this, 'partial'), func_get_args());
 	}
 
 	public function partial($name, $template_vars=array())
