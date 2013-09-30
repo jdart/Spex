@@ -26,7 +26,7 @@ class Spex extends WireData implements Module
 	{
 		return array(
 			'title' => 'Spex', 
-			'version' => 12, 
+			'version' => 13, 
 			'summary' => 'An asset and template management module.',
 			'href' => 'https://github.com/jdart/Spex',
 			'singular' => true, 
@@ -63,9 +63,8 @@ class Spex extends WireData implements Module
 
 	public function init() 
 	{
-		$this->addHookBefore('TemplateFile::render', $this, 'templateFileBeforeRender');
-		$this->addHookBefore('Page::render', $this, 'pageBeforeRender');
-		$this->addHookAfter('Page::render', $this, 'pageAfterRender'); 
+		$this->addHookBefore('TemplateFile::render', $this, 'templateFileRenderBefore');
+		$this->addHookAfter('TemplateFile::render', $this, 'templateFileRenderAfter');
 
 		$this->config->scripts->add($this->config->urls->siteModules.'Spex/lib/jquery.js');
 	}
@@ -75,30 +74,7 @@ class Spex extends WireData implements Module
 		require_once __DIR__.'/spex.php';
 	}
 
-	public function templateFileBeforeRender($event)
-	{
-		foreach ($this->getTemplateVars() as $key => $value)
-			$event->object->setGlobal($key, $value);
-	}
-
-	public function pageIsAdmin($page)
-	{
-		return $page->rootParent->id == $this->config->adminRootPageID;
-	}
-
-	public function pageIsFormBuilder($page)
-	{
-		$form_builder = $this->pages->get('template=form-builder');
-
-		return $form_builder && $page->rootParent->id == $form_builder->id;
-	}
-
-	public function isActiveForPage($page)
-	{
-		return !$this->pageIsAdmin($page) && !$this->pageIsFormBuilder($page);
-	}
-
-	public function pageBeforeRender($event)
+	public function templateFileRenderBefore($event)
 	{
 		if (!$this->isActiveForPage($event->object))
 			return;
@@ -111,11 +87,14 @@ class Spex extends WireData implements Module
 
 		if (is_file($init_file))		
 			require_once $init_file;
+
+		foreach ($this->getTemplateVars() as $key => $value)
+			$event->object->setGlobal($key, $value);
 	}
 
-	public function pageAfterRender($event)
+	public function templateFileRenderAfter($event)
 	{
-		if (!$this->isActiveForPage($event->object))
+		if (!$this->isActiveForPage($this->page))
 			return;
 
 		if (!$this->layout)
@@ -136,11 +115,31 @@ class Spex extends WireData implements Module
 			$layout_body = ob_get_clean();
 		}
 
-		// wrap layout output with base layout (head and assets stuff)
 		ob_start();
+
+		// wrap layout output with base layout (head and assets stuff)
 		require $config->paths->templates.'layout/'.$this->baseLayout.'.php';
+
 		$event->return = ob_get_clean();
 	}
+
+	public function pageIsAdmin($page)
+	{
+		return $page->rootParent->id == $this->config->adminRootPageID;
+	}
+
+	public function pageIsFormBuilder($page)
+	{
+		$form_builder = $this->pages->get('template=form-builder');
+
+		return $form_builder && $page->rootParent->id == $form_builder->id;
+	}
+
+	public function isActiveForPage($page)
+	{
+		return !$this->pageIsAdmin($page) && !$this->pageIsFormBuilder($page);
+	}
+
 
 	public function setLayout($layout)
 	{
