@@ -259,10 +259,11 @@ JS;
 		if (empty($lessc))
 			$lessc = $this->getLessc();
 
-		$sheetInfo = pathinfo($stylesheet);
-
-		if ($sheetInfo['extension'] != 'less')
-			return $stylesheet;
+		$sheetInfo1 = parse_url($stylesheet);
+		$sheetInfo2 = pathinfo($sheetInfo1['path']);
+     
+		if ($sheetInfo2['extension'] != 'less')
+			return $sheetInfo1['path'];
 
 		$new_relative_path = $sheetInfo['dirname'] . '/~' . $sheetInfo['filename'] . '.css';
 
