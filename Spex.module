@@ -265,7 +265,7 @@ JS;
 		if ($sheetInfo2['extension'] != 'less')
 			return $sheetInfo1['path'];
 
-		$new_relative_path = $sheetInfo['dirname'] . '/~' . $sheetInfo['filename'] . '.css';
+		$new_relative_path = $sheetInfo2['dirname'] . '/~' . $sheetInfo2['filename'] . '.css';
 
 		try {
 			$lessc->checkedCompile(
