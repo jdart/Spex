@@ -39,6 +39,7 @@ class Spex extends WireData implements Module
 		$this->createDir($tpl_dir.'layout');
 		$this->copyFile(__DIR__.'/example-site/layout/_base.php', $tpl_dir.'layout/_base.php');
 		$this->copyFile(__DIR__.'/example-site/layout/one-column.php', $tpl_dir.'layout/one-column.php');
+		$this->createDir($tpl_dir.'partial');
 		$this->copyFile(__DIR__.'/example-site/_init.php', $tpl_dir.'_init.php');
 	}
 
@@ -388,7 +389,7 @@ JS;
 
 	public function partial($name, $template_vars=array())
 	{
-		$path = sprintf('%s_%s.php', $this->config->paths->templates, $name);
+		$path = sprintf('%spartial/%s.php', $this->config->paths->templates, $name);
 
 		$template_vars = array_merge($this->getTemplateVars(), $template_vars);
 

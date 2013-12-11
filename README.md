@@ -27,6 +27,7 @@ Spex expects certain files to exist in your templates directory. You can find so
     + _base.php
     + one-column.php
     + ...
+* partial (directory)
 * _init.php
 
 ### layout/_base.php
@@ -109,7 +110,7 @@ That would result in Spex using the layout found at `templates/layout/one-column
 
 ### partial
 
-Partials contain reusable fragments of html like a sidebar or toolbar. The convention for partial files is that they are prefixed with an an underscore (`_`) and are found in `templates/`, i.e. `templates/_sidebar.php`. To call the partial _sidebar.php you write the below:
+Partials contain reusable fragments of html like a sidebar or toolbar. The convention for partial files is that they are located in a subdirectory of templates called 'partial', i.e. `templates/partial/sidebar.php`. To call the partial sidebar.php you write the below:
 
 `$spex->partial('sidebar');`
 
@@ -117,7 +118,7 @@ You can also pass an associative array to partial() to make additional variables
 
 `$spex->partial('sidebar', array('root' => $pages->find('/xyz/')));`
 
-Would make a variable `$root` available in _sidebar.php.
+Would make a variable `$root` available in sidebar.php.
 
 ### slot / hasSlot
 
