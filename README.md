@@ -60,7 +60,7 @@ Or a bunch at once:
 
 If the source files are outside of the template directory you'll need to pass a second parameter to addScript like the below:
 
-`$spex->addScript('lib/main.js', $config->urls->siteModules.'Spex/'));`
+`$spex->addScript('lib/main.js', $config->urls->siteModules.'Spex/');`
 
 If you want to add scripts that are not on the same server as your PW site, the second parameter should be false:
 
@@ -78,7 +78,7 @@ Or add a bunch at once:
 
 If the source files are outside of the template directory you'll need to pass a second parameter to addStyle like the below:
 
-`$spex->addStyle('lib/main.less', $config->urls->siteModules.'Spex/'));`
+`$spex->addStyle('lib/main.less', $config->urls->siteModules.'Spex/');`
 
 ### addTemplateVar
 
