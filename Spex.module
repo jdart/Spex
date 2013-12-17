@@ -24,7 +24,7 @@ class Spex extends WireData implements Module
 	{
 		return array(
 			'title' => 'Spex', 
-			'version' => 30, 
+			'version' => 40, 
 			'summary' => 'An asset and template management module.',
 			'href' => 'https://github.com/jdart/Spex',
 			'singular' => true, 
@@ -36,10 +36,10 @@ class Spex extends WireData implements Module
 	{
 		$tpl_dir = $this->config->paths->templates;
 
-		$this->createDir($tpl_dir.'layout');
-		$this->copyFile(__DIR__.'/example-site/layout/_base.php', $tpl_dir.'layout/_base.php');
-		$this->copyFile(__DIR__.'/example-site/layout/one-column.php', $tpl_dir.'layout/one-column.php');
-		$this->createDir($tpl_dir.'partial');
+		$this->createDir($tpl_dir.'layouts');
+		$this->copyFile(__DIR__.'/example-site/layouts/_base.php', $tpl_dir.'layouts/_base.php');
+		$this->copyFile(__DIR__.'/example-site/layouts/one-column.php', $tpl_dir.'layouts/one-column.php');
+		$this->createDir($tpl_dir.'partials');
 		$this->copyFile(__DIR__.'/example-site/_init.php', $tpl_dir.'_init.php');
 	}
 
@@ -108,14 +108,14 @@ class Spex extends WireData implements Module
 		} else { // wrap page output in layout
 
 			ob_start();
-			require $config->paths->templates.'layout/'.$this->layout.'.php';
+			require $config->paths->templates.'layouts/'.$this->layout.'.php';
 			$layout_body = ob_get_clean();
 		}
 
 		ob_start();
 
 		// wrap layout output with base layout (head and assets stuff)
-		require $config->paths->templates.'layout/'.$this->baseLayout.'.php';
+		require $config->paths->templates.'layouts/'.$this->baseLayout.'.php';
 
 		$event->return = ob_get_clean();
 	}
@@ -389,7 +389,7 @@ JS;
 
 	public function partial($name, $template_vars=array())
 	{
-		$path = sprintf('%spartial/%s.php', $this->config->paths->templates, $name);
+		$path = sprintf('%spartials/%s.php', $this->config->paths->templates, $name);
 
 		$template_vars = array_merge($this->getTemplateVars(), $template_vars);
 

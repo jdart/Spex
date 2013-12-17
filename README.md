@@ -1,4 +1,4 @@
-# Spex 0.3.0
+# Spex 0.4.0
 
 ## About Spex
 
@@ -23,22 +23,22 @@ These steps assume you have ProcessWire installed.
 
 Spex expects certain files to exist in your templates directory. You can find some boilerplate code in the example-site directory.
 
-* layout (directory)
+* layouts (directory)
     + _base.php
     + one-column.php
     + ...
-* partial (directory)
+* partials (directory)
 * _init.php
 
-### layout/_base.php
+### layouts/_base.php
 
 This file is responsible for outputting the html, head, body, link (css) and script (js) tags.
 
 This file will have a variable `$layout_body` that has the output from the layout.
 
-### layout/one-column.php, layout/two-column.php, etc...
+### layouts/one-column.php, layouts/two-column.php, etc...
 
-Any file in the layout directory that is not _base.php is considered a layout. If your site has one column and two column layout you will want to create one-column.php and two-column.php in your layout directory.
+Any file in the layouts directory that is not _base.php is considered a layout. If your site has one column and two column layout you will want to create one-column.php and two-column.php in your layouts directory.
 
 This file will have a variable `$template_output` available that has the output from your template (aka page render).
 
@@ -106,11 +106,11 @@ To set a layout, call setLayout like the below:
 
 `$spex->setLayout('one-column');`
 
-That would result in Spex using the layout found at `templates/layout/one-column.php` being used.
+That would result in Spex using the layout found at `templates/layouts/one-column.php` being used.
 
 ### partial
 
-Partials contain reusable fragments of html like a sidebar or toolbar. The convention for partial files is that they are located in a subdirectory of templates called 'partial', i.e. `templates/partial/sidebar.php`. To call the partial sidebar.php you write the below:
+Partials contain reusable fragments of html like a sidebar or toolbar. The convention for partial files is that they are located in a subdirectory of templates called 'partials', i.e. `templates/partials/sidebar.php`. To call the partial sidebar.php you write the below:
 
 `$spex->partial('sidebar');`
 
