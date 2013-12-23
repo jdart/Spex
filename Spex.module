@@ -387,8 +387,23 @@ JS;
 		$captureStarted = false;
 	}
 
-	public function partial($name, $template_vars=array())
+	public function partial($name, $template_vars=array(), $cache_lifetime=null, $unique_per_url=false)
 	{
+		if ( ! is_null($cache_lifetime)) {
+
+			$cache_hash_string = $name;
+
+			if ($unique_per_url)
+				$cache_hash_string .= ':'.$_SERVER['REQUEST_URI'];
+
+			$cache_key = md5($cache_hash_string);
+
+			$cache = $this->modules->get('MarkupCache');
+
+			if ($data = $cache->get($cache_key, $cache_lifetime))
+				return $data;
+		}
+
 		$path = sprintf('%spartials/%s.php', $this->config->paths->templates, $name);
 
 		$template_vars = array_merge($this->getTemplateVars(), $template_vars);
@@ -396,9 +411,16 @@ JS;
 		extract($template_vars);
 
 		if (is_file($path)) {
+
 			ob_start();
 			require $path;
-			return ob_get_clean();
+			$data = ob_get_clean();
+
+			if ( ! is_null($cache_lifetime)) {
+				$cache->save($data);
+			}
+
+			return $data;
 		}
 
 		return '';

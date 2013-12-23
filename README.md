@@ -4,7 +4,7 @@
 
 Spex is an asset and template management module for the [ProcessWire CMS/CMF](http://processwire.com/). 
 
-This library was born out of a love of ProcessWire and the yucky feeling the use of a head.inc and foot.inc left in my mouth. The project makes use of [lessphp](http://leafo.net/lessphp/), [less.js](http://lesscss.org/), [jQuery](http://jquery.com/), [modernizr](http://modernizr.com/), [Minify](https://code.google.com/p/minify/) and the ProcessWire [Minify Module](http://modules.processwire.com/modules/minify/).
+This library was born out of a love of ProcessWire and the yucky feeling the use of a head.inc and foot.inc left in my mouth. The project makes use of [lessphp](http://leafo.net/lessphp/), [less.js](http://lesscss.org/), [jQuery](http://jquery.com/), [modernizr](http://modernizr.com/), [Minify](https://code.google.com/p/minify/) and the ProcessWire [Minify Module](http://modules.processwire.com/modules/minify/) and [MarupCache Module]http://modules.processwire.com/modules/markup-cache/.
 
 * [Information about the author](http://metricmarketing.ca/jonathan-dart)
 * [Information about Metric Marketing](http://metricmarketing.ca)
@@ -16,6 +16,7 @@ This library was born out of a love of ProcessWire and the yucky feeling the use
 These steps assume you have ProcessWire installed.
 
 * Install the [Minify Module](http://modules.processwire.com/modules/minify/)
+* Install the [MarkupCache Module](http://modules.processwire.com/modules/markup-cache/)
 * Clone this repo in your site's modules directory
 * [Install the module](http://modules.processwire.com/install-uninstall/)
 
@@ -119,6 +120,14 @@ You can also pass an associative array to partial() to make additional variables
 `$spex->partial('sidebar', array('root' => $pages->find('/xyz/')));`
 
 Would make a variable `$root` available in sidebar.php.
+
+Partials can also be cached which might be useful if they pull content from an RSS feed or something like that. 
+
+`$spex->partial('rssFeed', array('url' => '...'), 3600);`
+
+The above would cache the rssFeed for 3600 seconds. The caching is based on the name of the partial unless you pass a fourth parameter of true which would base the caching on the partial name and the URI of the current request.
+
+`$spex->partial('rssFeed', array('url' => '...'), 3600, true);`
 
 ### slot / hasSlot
 
