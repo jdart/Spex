@@ -1,4 +1,4 @@
-# Spex 0.4.0
+# Spex 0.4.1
 
 ## About Spex
 
