@@ -24,7 +24,7 @@ class Spex extends WireData implements Module
 	{
 		return array(
 			'title' => 'Spex', 
-			'version' => 41, 
+			'version' => 42, 
 			'summary' => 'An asset and template management module.',
 			'href' => 'https://github.com/jdart/Spex',
 			'singular' => true, 
@@ -387,13 +387,19 @@ JS;
 		$captureStarted = false;
 	}
 
-	public function partial($name, $template_vars=array(), $cache_lifetime=null, $unique_per_url=false)
+	/**
+	 * @param integer $cache_lifetime In seconds, null for no cacheing
+	 * @param string|bool $cache_key If a string then treated as cache key, if true then use the url, if false then always the same.
+	 */
+	public function partial($name, $template_vars=array(), $cache_lifetime=null, $cache_key=false)
 	{
 		if ( ! is_null($cache_lifetime)) {
 
 			$cache_hash_string = $name;
 
-			if ($unique_per_url)
+			if (is_string($cache_key))
+				$cache_hash_string .= ':'.$cache_key;
+			elseif ($cache_key === true)
 				$cache_hash_string .= ':'.$_SERVER['REQUEST_URI'];
 
 			$cache_key = md5($cache_hash_string);
@@ -406,7 +412,10 @@ JS;
 
 		$path = sprintf('%spartials/%s.php', $this->config->paths->templates, $name);
 
-		$template_vars = array_merge($this->getTemplateVars(), $template_vars);
+		if (is_array($template_vars))
+			$template_vars = array_merge($this->getTemplateVars(), $template_vars);
+		else
+			$template_vars = $this->getTemplateVars();
 
 		extract($template_vars);
 

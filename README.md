@@ -1,4 +1,4 @@
-# Spex 0.4.1
+# Spex 0.4.2
 
 ## About Spex
 
@@ -127,6 +127,10 @@ Partials can also be cached which might be useful if they pull content from an R
 The above would cache the rssFeed for 3600 seconds. The caching is based on the name of the partial unless you pass a fourth parameter of true which would base the caching on the partial name and the URI of the current request.
 
 `$spex->partial('rssFeed', array('url' => '...'), 3600, true);`
+
+You can also specify a custom cache key like the below:
+
+`$spex->partial('rssFeed', array('url' => '...'), 3600, $user->id);`
 
 ### slot / hasSlot
 
