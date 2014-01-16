@@ -74,7 +74,7 @@ class Spex extends WireData implements Module
 
 	public function templateFileRenderBefore($event)
 	{
-		if (!$this->isActiveForPage($this->page))
+		if (!$this->isActiveForPage($this->page) || !$this->isActiveForEvent($event))
 			return;
 
 		extract($this->getTemplateVars());
@@ -90,7 +90,7 @@ class Spex extends WireData implements Module
 
 	public function templateFileRenderAfter($event)
 	{
-		if (!$this->isActiveForPage($this->page))
+		if (!$this->isActiveForPage($this->page) || !$this->isActiveForEvent($event))
 			return;
 
 		if (!$this->layout)
@@ -136,6 +136,12 @@ class Spex extends WireData implements Module
 		return !$this->pageIsAdmin($page) && !$this->pageIsFormBuilder($page);
 	}
 
+	public function isActiveForEvent($event)
+	{
+		$filename = $event->object->get('filename');
+
+		return strpos($filename, '/FormBuilder/') === false;
+	}
 
 	public function setLayout($layout)
 	{
