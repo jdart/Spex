@@ -1,4 +1,4 @@
-# Spex 0.2.0
+# Spex 0.4.2
 
 ## About Spex
 
@@ -23,21 +23,22 @@ These steps assume you have ProcessWire installed.
 
 Spex expects certain files to exist in your templates directory. You can find some boilerplate code in the example-site directory.
 
-* layout (directory)
+* layouts (directory)
     + _base.php
     + one-column.php
     + ...
+* partials (directory)
 * _init.php
 
-### layout/_base.php
+### layouts/_base.php
 
 This file is responsible for outputting the html, head, body, link (css) and script (js) tags.
 
 This file will have a variable `$layout_body` that has the output from the layout.
 
-### layout/one-column.php, layout/two-column.php, etc...
+### layouts/one-column.php, layouts/two-column.php, etc...
 
-Any file in the layout directory that is not _base.php is considered a layout. If your site has one column and two column layout you will want to create one-column.php and two-column.php in your layout directory.
+Any file in the layouts directory that is not _base.php is considered a layout. If your site has one column and two column layout you will want to create one-column.php and two-column.php in your layouts directory.
 
 This file will have a variable `$template_output` available that has the output from your template (aka page render).
 
@@ -59,7 +60,7 @@ Or a bunch at once:
 
 If the source files are outside of the template directory you'll need to pass a second parameter to addScript like the below:
 
-`$spex->addScript('lib/main.js', $config->urls->siteModules.'Spex/'));`
+`$spex->addScript('lib/main.js', $config->urls->siteModules.'Spex/');`
 
 If you want to add scripts that are not on the same server as your PW site, the second parameter should be false:
 
@@ -77,7 +78,7 @@ Or add a bunch at once:
 
 If the source files are outside of the template directory you'll need to pass a second parameter to addStyle like the below:
 
-`$spex->addStyle('lib/main.less', $config->urls->siteModules.'Spex/'));`
+`$spex->addStyle('lib/main.less', $config->urls->siteModules.'Spex/');`
 
 ### addTemplateVar
 
@@ -105,11 +106,11 @@ To set a layout, call setLayout like the below:
 
 `$spex->setLayout('one-column');`
 
-That would result in Spex using the layout found at `templates/layout/one-column.php` being used.
+That would result in Spex using the layout found at `templates/layouts/one-column.php` being used.
 
 ### partial
 
-Partials contain reusable fragments of html like a sidebar or toolbar. The convention for partial files is that they are prefixed with an an underscore (`_`) and are found in `templates/`, i.e. `templates/_sidebar.php`. To call the partial _sidebar.php you write the below:
+Partials contain reusable fragments of html like a sidebar or toolbar. The convention for partial files is that they are located in a subdirectory of templates called 'partials', i.e. `templates/partials/sidebar.php`. To call the partial sidebar.php you write the below:
 
 `$spex->partial('sidebar');`
 
@@ -117,7 +118,19 @@ You can also pass an associative array to partial() to make additional variables
 
 `$spex->partial('sidebar', array('root' => $pages->find('/xyz/')));`
 
-Would make a variable `$root` available in _sidebar.php.
+Would make a variable `$root` available in sidebar.php.
+
+Partials can also be cached which might be useful if they pull content from an RSS feed or something like that. 
+
+`$spex->partial('rssFeed', array('url' => '...'), 3600);`
+
+The above would cache the rssFeed for 3600 seconds. The caching is based on the name of the partial unless you pass a fourth parameter of true which would base the caching on the partial name and the URI of the current request.
+
+`$spex->partial('rssFeed', array('url' => '...'), 3600, true);`
+
+You can also specify a custom cache key like the below:
+
+`$spex->partial('rssFeed', array('url' => '...'), 3600, $user->id);`
 
 ### slot / hasSlot
 

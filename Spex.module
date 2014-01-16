@@ -24,7 +24,7 @@ class Spex extends WireData implements Module
 	{
 		return array(
 			'title' => 'Spex', 
-			'version' => 20, 
+			'version' => 42, 
 			'summary' => 'An asset and template management module.',
 			'href' => 'https://github.com/jdart/Spex',
 			'singular' => true, 
@@ -36,9 +36,10 @@ class Spex extends WireData implements Module
 	{
 		$tpl_dir = $this->config->paths->templates;
 
-		$this->createDir($tpl_dir.'layout');
-		$this->copyFile(__DIR__.'/example-site/layout/_base.php', $tpl_dir.'layout/_base.php');
-		$this->copyFile(__DIR__.'/example-site/layout/one-column.php', $tpl_dir.'layout/one-column.php');
+		$this->createDir($tpl_dir.'layouts');
+		$this->copyFile(__DIR__.'/example-site/layouts/_base.php', $tpl_dir.'layouts/_base.php');
+		$this->copyFile(__DIR__.'/example-site/layouts/one-column.php', $tpl_dir.'layouts/one-column.php');
+		$this->createDir($tpl_dir.'partials');
 		$this->copyFile(__DIR__.'/example-site/_init.php', $tpl_dir.'_init.php');
 	}
 
@@ -107,14 +108,14 @@ class Spex extends WireData implements Module
 		} else { // wrap page output in layout
 
 			ob_start();
-			require $config->paths->templates.'layout/'.$this->layout.'.php';
+			require $config->paths->templates.'layouts/'.$this->layout.'.php';
 			$layout_body = ob_get_clean();
 		}
 
 		ob_start();
 
 		// wrap layout output with base layout (head and assets stuff)
-		require $config->paths->templates.'layout/'.$this->baseLayout.'.php';
+		require $config->paths->templates.'layouts/'.$this->baseLayout.'.php';
 
 		$event->return = ob_get_clean();
 	}
@@ -392,18 +393,49 @@ JS;
 		$captureStarted = false;
 	}
 
-	public function partial($name, $template_vars=array())
+	/**
+	 * @param integer $cache_lifetime In seconds, null for no cacheing
+	 * @param string|bool $cache_key If a string then treated as cache key, if true then use the url, if false then always the same.
+	 */
+	public function partial($name, $template_vars=array(), $cache_lifetime=null, $cache_key=false)
 	{
-		$path = sprintf('%s_%s.php', $this->config->paths->templates, $name);
+		if ( ! is_null($cache_lifetime)) {
 
-		$template_vars = array_merge($this->getTemplateVars(), $template_vars);
+			$cache_hash_string = $name;
+
+			if (is_string($cache_key))
+				$cache_hash_string .= ':'.$cache_key;
+			elseif ($cache_key === true)
+				$cache_hash_string .= ':'.$_SERVER['REQUEST_URI'];
+
+			$cache_key = md5($cache_hash_string);
+
+			$cache = $this->modules->get('MarkupCache');
+
+			if ($data = $cache->get($cache_key, $cache_lifetime))
+				return $data;
+		}
+
+		$path = sprintf('%spartials/%s.php', $this->config->paths->templates, $name);
+
+		if (is_array($template_vars))
+			$template_vars = array_merge($this->getTemplateVars(), $template_vars);
+		else
+			$template_vars = $this->getTemplateVars();
 
 		extract($template_vars);
 
 		if (is_file($path)) {
+
 			ob_start();
 			require $path;
-			return ob_get_clean();
+			$data = ob_get_clean();
+
+			if ( ! is_null($cache_lifetime)) {
+				$cache->save($data);
+			}
+
+			return $data;
 		}
 
 		return '';
