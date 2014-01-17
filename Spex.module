@@ -447,11 +447,7 @@ JS;
 		else
 			$template_vars = $this->getTemplateVars();
 
-		extract($template_vars);
-
 		if (is_file($path)) {
-
-			ob_start();
 
 			$stylesBefore = clone $this->config->styles;
 			$scriptBefore = clone $this->config->scripts;
@@ -459,11 +455,14 @@ JS;
 			$lateLoadBefore = $this->lateLoad;
 			$docReadyBefore = $this->capturedJs;
 
+			extract($template_vars);
+
+			ob_start();
+
 			require $path;
-			$body = ob_get_clean();
 
 			$data = array(
-				'body' => $body, 
+				'body' => ob_get_clean(), 
 				'styles' => $this->getArrayDiff($this->config->styles, $stylesBefore),
 				'scripts' => $this->getArrayDiff($this->config->scripts, $scriptBefore),
 				'docReady' => str_replace($docReadyBefore, '', $this->capturedJs),
@@ -475,7 +474,7 @@ JS;
 				$cache->save(serialize($data));
 			}
 
-			return $body;
+			return $data['body'];
 		}
 
 		return '';
