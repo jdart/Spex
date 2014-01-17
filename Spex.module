@@ -187,8 +187,11 @@ JS;
 		if (is_null($root))
 			$root = $this->config->urls->templates;
 
-		foreach ($input as $js)
-			$this->config->scripts->add($root.$js);
+		foreach ($input as $js) {
+			if (strpos($js, $root) !== 0)
+				$js = $root . $js;
+			$this->config->scripts->add($js);
+		}
 	}
 
 	public function includeScripts(array $javascripts=null, $root=null)
@@ -236,9 +239,12 @@ JS;
 
 		if (is_null($root))
 			$root = $this->config->urls->templates;
-		
-		foreach ($input as $css)
-			$this->config->styles->add($root.$css);
+
+		foreach ($input as $css) {
+			if (strpos($css, $root) !== 0)
+				$css = $root . $css;
+			$this->config->styles->add($css);
+		}
 	}
 
 	public function addStylesheet($input, $root=null) 
@@ -406,8 +412,26 @@ JS;
 
 			$cache = $this->modules->get('MarkupCache');
 
-			if ($data = $cache->get($cache_key, $cache_lifetime))
-				return $data;
+			if ($data = $cache->get($cache_key, $cache_lifetime)) {
+
+				$data = unserialize($data);
+
+				foreach ($data['styles'] as $style)
+					$this->addStyle($style);
+
+				foreach ($data['scripts'] as $script)
+					$this->addScript($script);
+
+				foreach ($data['lateLoad'] as $lateLoad)
+					$this->lateLoadMarkup($lateLoad, false);
+
+				foreach ($data['images'] as $image)
+					$this->addImage($image);
+
+				$this->docReady($data['docReady']);
+
+				return $data['body'];
+			}
 		}
 
 		$path = sprintf('%spartials/%s.php', $this->config->paths->templates, $name);
@@ -422,17 +446,43 @@ JS;
 		if (is_file($path)) {
 
 			ob_start();
+
+			$stylesBefore = clone $this->config->styles;
+			$scriptBefore = clone $this->config->scripts;
+			$imagesBefore = $this->images;
+			$lateLoadBefore = $this->lateLoad;
+			$docReadyBefore = $this->capturedJs;
+
 			require $path;
-			$data = ob_get_clean();
+			$body = ob_get_clean();
+
+			$data = array(
+				'body' => $body, 
+				'styles' => $this->getArrayDiff($this->config->styles, $stylesBefore),
+				'scripts' => $this->getArrayDiff($this->config->scripts, $scriptBefore),
+				'docReady' => str_replace($docReadyBefore, '', $this->capturedJs),
+				'lateLoad' => $this->getArrayDiff($this->lateLoad, $lateLoadBefore),
+				'images' => $this->getArrayDiff($this->images, $imagesBefore),
+			);
 
 			if ( ! is_null($cache_lifetime)) {
-				$cache->save($data);
+				$cache->save(serialize($data));
 			}
 
-			return $data;
+			return $body;
 		}
 
 		return '';
+	}
+
+	public function getArrayDiff($after, $before)
+	{
+		if ($after instanceof FilenameArray)
+			$after = $after->getIterator()->getArrayCopy();
+		if ($before instanceof FilenameArray)
+			$before = $before->getIterator()->getArrayCopy();
+
+		return array_diff($after, $before);
 	}
 
 	public function slot($name, $value=null)
@@ -476,11 +526,19 @@ JS;
 			return;
 		}
 
+		$this->lateLoadMarkup(ob_get_clean());
+
+		$captureStarted = false;
+	}
+
+	protected function lateLoadMarkup($markup, $echo=true)
+	{
 		$key = 'late-load-'.count($this->lateLoad);
 
-		$this->lateLoad[$key] = ob_get_clean();
+		$this->lateLoad[$key] = $markup;
 
-		echo '<div id="'.$key.'"></div>';
+		if ($echo)
+			echo '<div id="'.$key.'"></div>';
 
 		$captureStarted = false;
 	}
