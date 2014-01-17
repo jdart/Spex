@@ -70,7 +70,7 @@ class Spex extends WireData implements Module
 
 	public function enableProceduralHelpers()
 	{
-		require_once __DIR__.'/spex.php';
+		require_once __DIR__.'/lib/spex.php';
 	}
 
 	public function templateFileRenderBefore($event)
