@@ -1,4 +1,4 @@
-# Spex 0.4.2
+# Spex 0.5.0
 
 ## About Spex
 
@@ -131,6 +131,8 @@ The above would cache the rssFeed for 3600 seconds. The caching is based on the 
 You can also specify a custom cache key like the below:
 
 `$spex->partial('rssFeed', array('url' => '...'), 3600, $user->id);`
+
+If caching a partial, Spex will keep track of assets added with addStyle(), addScript(), addImage(), lateLoad() and docReady(), and duplicate those calls even if necessary.
 
 ### slot / hasSlot
 
