@@ -41,7 +41,7 @@ class Spex extends WireData implements Module, ConfigurableModule
 		$field->name = "less_compiler_function";
 		$field->label = __("Less Compiler Function");
 		$field->value = $data['less_compiler_function'];
-		$field->description = __("If you don't want the inlcuded lessphp library to compile your .less files you can provide an alternate function to do that work here.");
+		$field->description = __("If you don't want the included lessphp library to compile your .less files you can provide an alternate function to do that work here.");
 		$field->notes = __('Optional. The function signature is "yourFunctionName($stylesheet, $new_relative_path)". See https://github.com/jdart/Spex#custom-less-compiler for more details.');
 		
 		$fields->add($field);
