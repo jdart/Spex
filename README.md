@@ -1,4 +1,4 @@
-# Spex 0.5.1
+# Spex 0.5.2
 
 ## About Spex
 

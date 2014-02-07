@@ -24,7 +24,7 @@ class Spex extends WireData implements Module, ConfigurableModule
 	{
 		return array(
 			'title' => 'Spex', 
-			'version' => 51, 
+			'version' => 52, 
 			'summary' => 'An asset and template management module.',
 			'href' => 'https://github.com/jdart/Spex',
 			'singular' => true, 
@@ -292,7 +292,7 @@ JS;
 
 		$css_relative_path = $sheetInfo2['dirname'] . '/~' . $sheetInfo2['filename'] . '.css';
 		$css_path = $this->config->paths->root . $css_relative_path;
-        $less_path = $this->config->paths->root . trim($stylesheet, '/');
+		$less_path = $this->config->paths->root . trim($stylesheet, '/');
 
 		$compilerFunction = $this->get('less_compiler_function');
 
