@@ -221,7 +221,7 @@ is equivalent to the below:
 
 `$spex->addScript('scripts/foo.js');`
 
-The list of procedural helpers are below: 
+The list of procedural helpers is below: 
 
 * addScript
 * docReady
