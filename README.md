@@ -1,4 +1,4 @@
-# Spex 0.5.0
+# Spex 0.5.1
 
 ## About Spex
 
@@ -238,3 +238,15 @@ The list of procedural helpers are below:
 * hasSlot
 * captureSlot
 * lateLoad
+
+## Custom Less Compiler
+
+If you don't want to use the included less compiler (lessphp), you can specify your own. To do that go to the modules page in the backend of processwire, click the settings button next to Spex, and enter a function in the field below "Less Compiler Function". If your function name was `compileWithLessc()`, you would put "compileWithLessc" in there. Below is an example implementation:
+
+    function compileWithLessc($less_path, $css_path)
+    {
+        if ( ! is_file($css_path) || filemtime($css_path) < filemtime($less_path)) {
+
+            `/var/www/lib/vendor/node_modules/less/bin/lessc $less_path $css_path`;
+        }
+    }

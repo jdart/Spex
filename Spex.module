@@ -9,7 +9,7 @@
  * http://metricmarketing.ca/blog/author/jonathan-dart
  *
  */
-class Spex extends WireData implements Module 
+class Spex extends WireData implements Module, ConfigurableModule
 {
 	protected 
 		$capturedJs = '',
@@ -24,12 +24,29 @@ class Spex extends WireData implements Module
 	{
 		return array(
 			'title' => 'Spex', 
-			'version' => 50, 
+			'version' => 51, 
 			'summary' => 'An asset and template management module.',
 			'href' => 'https://github.com/jdart/Spex',
 			'singular' => true, 
 			'autoload' => true, 
 		);
+	}
+
+	static public function getModuleConfigInputfields(array $data) 
+	{
+		$fields = new InputfieldWrapper();
+		$modules = Wire::getFuel('modules');
+
+		$field = $modules->get("InputfieldText");
+		$field->name = "less_compiler_function";
+		$field->label = __("Less Compiler Function");
+		$field->value = $data['less_compiler_function'];
+		$field->description = __("If you don't want the inlcuded lessphp library to compile your .less files you can provide an alternate function to do that work here.");
+		$field->notes = __('Optional. The function signature is "yourFunctionName($stylesheet, $new_relative_path)". See https://github.com/jdart/Spex#custom_less_compiler for more details.');
+		
+		$fields->add($field);
+
+		return $fields;
 	}
 
 	public function ___install()
@@ -267,29 +284,38 @@ JS;
 	 */
 	public function compileStyle($stylesheet)
 	{
-		static $lessc;
-
-		if (empty($lessc))
-			$lessc = $this->getLessc();
-
 		$sheetInfo1 = parse_url($stylesheet);
 		$sheetInfo2 = pathinfo($sheetInfo1['path']);
      
 		if ($sheetInfo2['extension'] != 'less')
 			return $sheetInfo1['path'];
 
-		$new_relative_path = $sheetInfo2['dirname'] . '/~' . $sheetInfo2['filename'] . '.css';
+		$css_relative_path = $sheetInfo2['dirname'] . '/~' . $sheetInfo2['filename'] . '.css';
+		$css_path = $this->config->paths->root . $css_relative_path;
+        $less_path = $this->config->paths->root . trim($stylesheet, '/');
+
+		$compilerFunction = $this->get('less_compiler_function');
+
+		if (is_callable($compilerFunction))			
+			call_user_func($compilerFunction, $less_path, $css_path);
+		else 
+			$this->compileStyleWithLessphp($less_path, $css_path);
+
+		return $css_relative_path;
+	}
+
+	public function compileStyleWithLessphp($less_path, $css_path)
+	{
+		static $lessc;
+
+		if (empty($lessc))
+			$lessc = $this->getLessc();
 
 		try {
-			$lessc->checkedCompile(
-				$this->config->paths->root . trim($stylesheet, '/'), 
-				$this->config->paths->root . trim($new_relative_path, '/')
-			);						
+			$lessc->checkedCompile($less_path, $css_path);						
 		} catch (Exception $e) {
 			echo "fatal error: " . $e->getMessage();
 		}
-
-		return $new_relative_path;
 	}
 
 	public function includeStyles(array $stylesheets=null, $root=null)
