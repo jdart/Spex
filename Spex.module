@@ -261,7 +261,7 @@ JS;
 			$input = array($input);
 
 		if (is_null($root))
-			$root = $this->config->urls->templates;
+			$root = 'site/templates/';
 
 		foreach ($input as $css) {
 			if (strpos($css, $root) !== 0)
