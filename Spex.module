@@ -208,7 +208,7 @@ JS;
 			$input = array($input);
 
 		if (is_null($root))
-			$root = $this->config->urls->templates;
+			$root = 'site/templates/';
 
 		foreach ($input as $js) {
 			if (strpos($js, $root) !== 0)
