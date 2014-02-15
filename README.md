@@ -21,7 +21,9 @@ These steps assume you have ProcessWire installed.
 
 ## File Struture
 
-Spex expects certain files to exist in your templates directory. You can find some boilerplate code in the example-site directory.
+Spex uses a three-level template inheritance model similar to how Symfony and Twig work by default. The first level is your regular ProcessWire template, the output from that is decorated with a "layout template", and the output from that is decorated with the base layout template which handles the head of your html document and more. You can find some boilerplate code in the example-site directory. 
+
+Below is the expected directory structure in a ProcessWire project using Spex:
 
 * layouts (directory)
     + _base.php
