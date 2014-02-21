@@ -1,4 +1,4 @@
-# Spex 0.5.2
+# Spex 0.6.0
 
 ## About Spex
 
@@ -209,6 +209,15 @@ This captures html and sets it up to be the last thing loaded on the page. You'd
 
     <?php lateLoad();
 
+### addBreadcrumb / getBreadcrumbs
+
+These helpers are a convenience layer on top of the Breadcrumb/Breadcrumbs class available in ProcessWire.
+
+`$spex->addBreadcrumb('url/goes/here', 'The Title Goes Here');`
+
+    foreach ($spex->getBreadcrumbs() as $breadcrumb) 
+        echo sprintf('<a href="%s">%s</a>', $breadcrumb->url, $breadcrumb->title);
+
 ## Procedural Helpers
 
 Most of the class methods of the Spex class have procedural equivalents. To enable the procedural helpers, in your `templates/_init.php` set:
@@ -240,6 +249,8 @@ The list of procedural helpers is below:
 * hasSlot
 * captureSlot
 * lateLoad
+* addBreadcrumb
+* getBreadcrumbs
 
 ## Custom Less Compiler
 

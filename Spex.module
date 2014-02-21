@@ -18,13 +18,14 @@ class Spex extends WireData implements Module, ConfigurableModule
 		$baseLayout = '_base',
 		$slots = array(),
 		$images = array(),
-		$lateLoad = array();
+		$lateLoad = array(),
+		$breadcrumbs = null;
 
 	public static function getModuleInfo() 
 	{
 		return array(
 			'title' => 'Spex', 
-			'version' => 52, 
+			'version' => 60, 
 			'summary' => 'An asset and template management module.',
 			'href' => 'https://github.com/jdart/Spex',
 			'singular' => true, 
@@ -208,7 +209,7 @@ JS;
 			$input = array($input);
 
 		if (is_null($root))
-			$root = 'site/templates/';
+			$root = '/site/templates/';
 
 		foreach ($input as $js) {
 			if (strpos($js, $root) !== 0)
@@ -261,7 +262,7 @@ JS;
 			$input = array($input);
 
 		if (is_null($root))
-			$root = 'site/templates/';
+			$root = '/site/templates/';
 
 		foreach ($input as $css) {
 			if (strpos($css, $root) !== 0)
@@ -291,7 +292,7 @@ JS;
 			return $sheetInfo1['path'];
 
 		$css_relative_path = $sheetInfo2['dirname'] . '/~' . $sheetInfo2['filename'] . '.css';
-		$css_path = $this->config->paths->root . $css_relative_path;
+		$css_path = $this->config->paths->root . trim($css_relative_path, '/');
 		$less_path = $this->config->paths->root . trim($stylesheet, '/');
 
 		$compilerFunction = $this->get('less_compiler_function');
@@ -573,4 +574,22 @@ JS;
 
 		$captureStarted = false;
 	}
+
+	public function addBreadcrumb($url, $title)
+	{
+		$breadcrumbs = $this->getBreadcrumbs();
+		$breadcrumb = new Breadcrumb($url, $title);
+		$breadcrumbs->add($breadcrumb);
+	}
+
+	public function getBreadcrumbs()
+	{
+		if (!isset($this->breadcrumbs)) {
+			$this->breadcrumbs = new Breadcrumbs;
+		}
+
+		return $this->breadcrumbs;
+	}
+
+
 }
