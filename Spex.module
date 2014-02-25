@@ -29,7 +29,7 @@ class Spex extends WireData implements Module, ConfigurableModule
 			'summary' => 'An asset and template management module.',
 			'href' => 'https://github.com/jdart/Spex',
 			'singular' => true, 
-			'autoload' => true, 
+			'autoload' => 'template!=admin'
 		);
 	}
 
@@ -138,11 +138,6 @@ class Spex extends WireData implements Module, ConfigurableModule
 		$event->return = ob_get_clean();
 	}
 
-	public function pageIsAdmin($page)
-	{
-		return $page->rootParent->id == $this->config->adminRootPageID;
-	}
-
 	public function pageIsFormBuilder($page)
 	{
 		$form_builder = $this->pages->get('template=form-builder');
@@ -152,7 +147,7 @@ class Spex extends WireData implements Module, ConfigurableModule
 
 	public function isActiveForPage($page)
 	{
-		return !$this->pageIsAdmin($page) && !$this->pageIsFormBuilder($page);
+		return !$this->pageIsFormBuilder($page);
 	}
 
 	public function isActiveForEvent($event)
@@ -287,7 +282,7 @@ JS;
 	{
 		$sheetInfo1 = parse_url($stylesheet);
 		$sheetInfo2 = pathinfo($sheetInfo1['path']);
-     
+	 
 		if ($sheetInfo2['extension'] != 'less')
 			return $sheetInfo1['path'];
 
