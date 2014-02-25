@@ -82,8 +82,6 @@ class Spex extends WireData implements Module, ConfigurableModule
 	{
 		$this->addHookBefore('TemplateFile::render', $this, 'templateFileRenderBefore');
 		$this->addHookAfter('TemplateFile::render', $this, 'templateFileRenderAfter');
-
-		$this->config->scripts->add($this->config->urls->siteModules.'Spex/lib/jquery.js');
 	}
 
 	public function enableProceduralHelpers()
@@ -95,6 +93,8 @@ class Spex extends WireData implements Module, ConfigurableModule
 	{
 		if (!$this->isActiveForPage($this->page) || !$this->isActiveForEvent($event))
 			return;
+
+		$this->config->scripts->add($this->config->urls->siteModules.'Spex/lib/jquery.js');
 
 		extract($this->getTemplateVars());
 
