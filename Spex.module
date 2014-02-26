@@ -94,8 +94,6 @@ class Spex extends WireData implements Module, ConfigurableModule
 		if (!$this->isActiveForPage($this->page) || !$this->isActiveForEvent($event))
 			return;
 
-		$this->config->scripts->add($this->config->urls->siteModules.'Spex/lib/jquery.js');
-
 		extract($this->getTemplateVars());
 
 		$init_file = $this->config->paths->templates . '_init.php';
@@ -219,6 +217,7 @@ JS;
 		$docReady = false;
 
 		if (is_null($javascripts)) {
+			$this->config->scripts->prepend($this->config->urls->siteModules.'Spex/lib/jquery.js');
 			$javascripts = $this->config->scripts->getIterator()->getArrayCopy();
 			$docReady = true;
 		}
