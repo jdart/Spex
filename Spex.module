@@ -30,7 +30,7 @@ class Spex extends WireData implements Module
 			'href' => 'https://github.com/jdart/Spex',
 			'singular' => true, 
 			'requires' => array('AllInOneMinify'),
-			'autoload' => 'template!=admin'
+			'autoload' => true,
 		);
 	}
 
@@ -129,7 +129,7 @@ class Spex extends WireData implements Module
 
 	public function isActiveForPage($page)
 	{
-		return !$this->pageIsFormBuilder($page);
+		return $page->template->name != 'admin' && !$this->pageIsFormBuilder($page);
 	}
 
 	public function isActiveForEvent($event)
