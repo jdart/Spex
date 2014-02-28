@@ -4,7 +4,7 @@
  * Turn on the functional helpers.
  */
 
-$spex->enableProceduralHelpers();
+// $spex->enableProceduralHelpers();
 
 /**
  * Make the one-column layout the default.
@@ -22,6 +22,6 @@ $spex->setLayout('one-column');
  * Add some assets. jQuery and modernizr are already taken care of.
  */
 
-// $spex->addScript('scripts/main.js');
+$spex->addScript('scripts/main.js');
 
-// $spex->addStyle('styles/main.less');
+$spex->addStyle('styles/main.css');
