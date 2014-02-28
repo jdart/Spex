@@ -12,22 +12,20 @@
 		<?php if ($page->summary): ?>
 			<meta name="description" content="<?php echo $page->summary ?>" />
 		<?php endif ?>
-
-		<?php $spex->includeStyles() ?>
 		
-		<?php $spex->includeHeadScripts() ?>
-
+		<link href="<?php echo AllInOneMinify::CSS($spex->getStyles()) ?>" rel="stylesheet" type="text/css" />
+		
 	</head>
 	<body class="<?php echo "template-$page->template section-{$page->rootParent->name} page-$page layout-{$spex->getLayout()}" ?>">
 
 		<?php echo $layout_body ?>
 
 		<?php if ($page->editable()): ?>
-			<a class="nav" id="editpage" href="<?php echo $config->urls->admin ?>page/edit/?id=<?php echo $page->id ?>">Edit</a>
+			<a class="editpage" href="<?php echo $config->urls->admin ?>page/edit/?id=<?php echo $page->id ?>">Edit</a>
 		<?php endif ?>
 
-		<?php $spex->includeScripts() ?>
-
+		<script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+		<script src="<?php echo AllInOneMinify::JS($spex->getScripts()) ?>"></script>
 		<?php $spex->includeDocReady() ?>
 
 	</body>

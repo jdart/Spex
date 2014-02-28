@@ -6,13 +6,8 @@ function spex() {
 }
 
 /**
- * Identical to $spex->includeScript();
+ * Identical to $spex->setLayout();
  */
-function includeScripts() {
-
-	return call_user_func_array(array(spex(), __METHOD__), func_get_args());
-}
-
 function setLayout() {
 	
 	return call_user_func_array(array(spex(), __METHOD__), func_get_args());
@@ -28,12 +23,12 @@ function addTemplateVar() {
 	return call_user_func_array(array(spex(), __METHOD__), func_get_args());
 }
 
-function includeHeadScripts() {
+function addScript() {
 
 	return call_user_func_array(array(spex(), __METHOD__), func_get_args());
 }
 
-function addScript() {
+function getScripts() {
 
 	return call_user_func_array(array(spex(), __METHOD__), func_get_args());
 }
@@ -43,9 +38,9 @@ function addStyle() {
 	return call_user_func_array(array(spex(), __METHOD__), func_get_args());	
 }
 
-function includeStyles() {
+function getStyles() {
 
-	return call_user_func_array(array(spex(), __METHOD__), func_get_args());	
+	return call_user_func_array(array(spex(), __METHOD__), func_get_args());
 }
 
 function includeDocReady() {

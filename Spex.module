@@ -9,7 +9,7 @@
  * http://metricmarketing.ca/blog/author/jonathan-dart
  *
  */
-class Spex extends WireData implements Module, ConfigurableModule
+class Spex extends WireData implements Module
 {
 	protected 
 		$capturedJs = '',
@@ -25,29 +25,13 @@ class Spex extends WireData implements Module, ConfigurableModule
 	{
 		return array(
 			'title' => 'Spex', 
-			'version' => 70, 
+			'version' => 80, 
 			'summary' => 'An asset and template management module.',
 			'href' => 'https://github.com/jdart/Spex',
 			'singular' => true, 
+			'requires' => array('AllInOneMinify'),
 			'autoload' => 'template!=admin'
 		);
-	}
-
-	static public function getModuleConfigInputfields(array $data) 
-	{
-		$fields = new InputfieldWrapper();
-		$modules = Wire::getFuel('modules');
-
-		$field = $modules->get("InputfieldText");
-		$field->name = "less_compiler_function";
-		$field->label = __("Less Compiler Function");
-		$field->value = $data['less_compiler_function'];
-		$field->description = __("If you don't want the included lessphp library to compile your .less files you can provide an alternate function to do that work here.");
-		$field->notes = __('Optional. The function signature is "yourFunctionName($less_path, $css_path)". See https://github.com/jdart/Spex#custom-less-compiler for more details.');
-		
-		$fields->add($field);
-
-		return $fields;
 	}
 
 	public function ___install()
@@ -86,7 +70,7 @@ class Spex extends WireData implements Module, ConfigurableModule
 
 	public function enableProceduralHelpers()
 	{
-		require_once __DIR__.'/lib/spex.php';
+		require_once __DIR__.'/spex.php';
 	}
 
 	public function templateFileRenderBefore($event)
@@ -185,69 +169,18 @@ class Spex extends WireData implements Module, ConfigurableModule
 		);
 	}
 
-	public function includeHeadScripts()
-	{
-		$config = $this->config;
-
-		echo '<script type="text/javascript">'.file_get_contents($config->paths->siteModules.'Spex/lib/modernizr.js').'</script>';
-
-		echo <<<JS
-<script type="text/javascript">(function(){var method;var noop=function(){};var methods=['assert','clear','count','debug','dir','dirxml','error','exception','group','groupCollapsed','groupEnd','info','log','markTimeline','profile','profileEnd','table','time','timeEnd','timeStamp','trace','warn'];var length=methods.length;var console=(window.console=window.console||{});while(length--){method=methods[length];if(!console[method]){console[method]=noop}}}());</script>
-JS;
-	}
-
 	public function addScript($input, $root=null)
 	{
 		if (!is_array($input))
 			$input = array($input);
 
-		if (is_null($root))
-			$root = '/site/templates/';
-
-		foreach ($input as $js) {
-			if (strpos($js, $root) !== 0)
-				$js = $root . $js;
+		foreach ($input as $js)
 			$this->config->scripts->add($js);
-		}
 	}
 
-	public function includeScripts(array $javascripts=null, $root=null)
+	public function getScripts()
 	{
-		$config = $this->config;
-		$docReady = false;
-
-		if (is_null($javascripts)) {
-			$this->config->scripts->prepend($this->config->urls->siteModules.'Spex/lib/jquery.js');
-			$javascripts = $this->config->scripts->getIterator()->getArrayCopy();
-			$docReady = true;
-		}
-
-		if (!is_null($root))
-			foreach ($javascripts as &$js)
-				$js = $root.$js;
-
-		if ( ! $this->config->debug) {
-
-			?>
-			<script 
-				type="text/javascript" 
-				src="<?php 
-					echo $this->config->urls->siteModules,
-						'Minify/min/?f=',
-						implode(',', $javascripts)
-				?>"
-			></script>
-			<?php
-
-		} else {
-
-			foreach ($javascripts as $javascript): ?>
-				<script type="text/javascript" src="<?php echo $javascript ?>"></script>
-			<?php endforeach;
-		}
-		
-		if ($docReady)
-			$this->includeDocReady();
+		return $this->config->scripts->getIterator()->getArrayCopy();
 	}
 
 	public function addStyle($input, $root=null)
@@ -255,120 +188,14 @@ JS;
 		if (!is_array($input))
 			$input = array($input);
 
-		if (is_null($root))
-			$root = '/site/templates/';
-
-		foreach ($input as $css) {
-			if (strpos($css, $root) !== 0)
-				$css = $root . $css;
+		foreach ($input as $css)
 			$this->config->styles->add($css);
-		}
 	}
 
-	public function addStylesheet($input, $root=null) 
+
+	public function getStyles()
 	{
-		$this->addStyle($input, $root);
-	}
-
-	/**
-	 * Converts a .less file into a .css file
-	 *
-	 * foo/bar.less would become foo/~bar.css
-	 *
-	 * @return string The path to the new .css file.
-	 */
-	public function compileStyle($stylesheet)
-	{
-		$sheetInfo1 = parse_url($stylesheet);
-		$sheetInfo2 = pathinfo($sheetInfo1['path']);
-	 
-		if ($sheetInfo2['extension'] != 'less')
-			return $sheetInfo1['path'];
-
-		$css_relative_path = $sheetInfo2['dirname'] . '/~' . $sheetInfo2['filename'] . '.css';
-		$css_path = $this->config->paths->root . trim($css_relative_path, '/');
-		$less_path = $this->config->paths->root . trim($stylesheet, '/');
-
-		$compilerFunction = $this->get('less_compiler_function');
-
-		if (is_callable($compilerFunction))			
-			call_user_func($compilerFunction, $less_path, $css_path);
-		else 
-			$this->compileStyleWithLessphp($less_path, $css_path);
-
-		return $css_relative_path;
-	}
-
-	public function compileStyleWithLessphp($less_path, $css_path)
-	{
-		static $lessc;
-
-		if (empty($lessc))
-			$lessc = $this->getLessc();
-
-		try {
-			$lessc->checkedCompile($less_path, $css_path);						
-		} catch (Exception $e) {
-			echo "fatal error: " . $e->getMessage();
-		}
-	}
-
-	public function includeStyles(array $stylesheets=null, $root=null)
-	{
-		if (is_null($stylesheets))
-			$stylesheets = $this->config->styles->getIterator()->getArrayCopy();
-
-		if (!is_null($root))
-			foreach ($stylesheets as &$style)
-				$style = $root.$style;
-
-		if ( ! $this->config->debug) {
-
-			foreach ($stylesheets as &$stylesheet)
-				$stylesheet = $this->compileStyle($stylesheet);
-
-			?>
-			<link 
-				href="<?php
-					echo $this->config->urls->siteModules, 
-						'Minify/min/?f=', 
-						implode(",", $stylesheets) 
-				?>" 
-				rel="stylesheet" 
-				type="text/css" 
-			/>
-			<?php
-
-		} else {
-
-			foreach ($stylesheets as $stylesheet): ?>
-				<link rel="stylesheet/less" media="screen" href="<?php echo $stylesheet ?>">
-			<?php endforeach ?>
-
-			<script type="text/javascript">
-				window.less = { env: "development" };
-			</script>	
-			<!--[if lt IE 9]>
-				<script type="text/javascript" src="<?php echo $this->config->urls->siteModules ?>Spex/lib/es5-shim.js"></script>
-			<![endif]-->
-
-			<script type="text/javascript" src="<?php echo $this->config->urls->siteModules ?>Spex/lib/less.js"></script>
-			<?php
-		}
-	}
-
-	public function getLessc()
-	{
-		require_once __DIR__.'/lib/less.php/lessc.inc.php';
-
-		$less = new lessc;
-
-		$less->setImportDir(array(
-			$this->config->paths->templates, 
-			$this->config->paths->templates.'styles/'
-		));
-
-		return $less;
+		return $this->config->styles->getIterator()->getArrayCopy();
 	}
 
 	public function addImage($src)
@@ -584,6 +411,4 @@ JS;
 
 		return $this->breadcrumbs;
 	}
-
-
 }

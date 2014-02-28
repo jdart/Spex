@@ -1,10 +1,12 @@
-# Spex 0.7.0
+# Spex 0.8.0
+
+## Warning: Starting with 0.8.0 Spex is much less opinionated and uses AIOM over the Minify Module.
 
 ## About Spex
 
 Spex is an asset and template management module for the [ProcessWire CMS/CMF](http://processwire.com/). 
 
-This library was born out of a love of ProcessWire and the yucky feeling the use of a head.inc and foot.inc left in my mouth. The project makes use of [less.php](http://lessphp.gpeasy.com/), [less.js](http://lesscss.org/), [jQuery](http://jquery.com/), [modernizr](http://modernizr.com/), [Minify](https://code.google.com/p/minify/) and the ProcessWire [Minify Module](http://modules.processwire.com/modules/minify/).
+This library was born out of a love of ProcessWire and the yucky feeling the use of a head.inc and foot.inc left in my mouth. Spex uses [jQuery](http://jquery.com/) and the [AIOM+ Module](http://modules.processwire.com/modules/all-in-one-minify/).
 
 * [Information about the author](http://metricmarketing.ca/jonathan-dart)
 * [Information about Metric Marketing](http://metricmarketing.ca)
@@ -13,11 +15,7 @@ This library was born out of a love of ProcessWire and the yucky feeling the use
 
 ## Installation
 
-These steps assume you have ProcessWire installed.
-
-* Install the [Minify Module](http://modules.processwire.com/modules/minify/)
-* Clone this repo in your site's modules directory
-* [Install the module](http://modules.processwire.com/install-uninstall/)
+* The [usual methods](http://modules.processwire.com/install-uninstall/) apply.
 
 ## File Struture
 
@@ -49,38 +47,6 @@ This file will have a variable `$template_output` available that has the output 
 This file is run before the page render, this is the place to set template variables, set a default layout, and add global css, less and javascript.
 
 ## Helpers
-
-### addScript
-
-This function adds a JavaScript file to the page. Spex assumes you want your script tags just before the `</body>` tag. You can add javascript files one at a time like the example code below.
-
-`$spex->addScript('scripts/main.js');`
-
-Or a bunch at once:
-
-`$spex->addScript(array('scripts/main.js', 'scripts/another.js'));`
-
-If the source files are outside of the template directory you'll need to pass a second parameter to addScript like the below:
-
-`$spex->addScript('lib/main.js', $config->urls->siteModules.'Spex/');`
-
-If you want to add scripts that are not on the same server as your PW site, the second parameter should be false:
-
-`$spex->addScript('http://code.jquery.com/jquery-1.10.1.min.js', false);`
-
-### addStyle
-
-Spex can handle .less or .css files. To add one stylesheet to the page at a time, use the below:
-
-`$spex->addStyle('styles/main.less');`
-
-Or add a bunch at once:
-
-`$spex->addStyle(array('styles/main.less', 'styles/home.less'));`
-
-If the source files are outside of the template directory you'll need to pass a second parameter to addStyle like the below:
-
-`$spex->addStyle('lib/main.less', $config->urls->siteModules.'Spex/');`
 
 ### addTemplateVar
 
@@ -174,24 +140,6 @@ or
 
 `<div style="background-image: url(<?php echo $spex->addImage('big-background.png') ?>);"></div>`
 
-### includeStyles
-
-This draws out all your `<link>` tags, and is usually only found in the _base layout.
-
-`$spex->includeStyles();`
-
-### includeScripts
-
-This draws out all your `<script>` tags, and is usually only found in the _base layout.
-
-`$spex->includeScripts();`
-
-### includeHeadScripts
-
-This draws any `<script>` tags that should appear in the document head, and is usually only found in the _base layout.
-
-`$spex->includeHeadScripts();`
-
 ### includeDocReady
 
 This draws out any JavaScript captured by docRead(), and is usually only found in the _base layout.
@@ -218,6 +166,33 @@ These helpers are a convenience layer on top of the Breadcrumb/Breadcrumbs class
     foreach ($spex->getBreadcrumbs() as $breadcrumb) 
         echo sprintf('<a href="%s">%s</a>', $breadcrumb->url, $breadcrumb->title);
 
+
+### addScript
+
+Use of this helper is not required, you can work directly with AIOM+ is you want.
+
+This function adds a JavaScript file to the page. Spex assumes you want your script tags just before the `</body>` tag. You can add javascript files one at a time like the example code below.
+
+`$spex->addScript('scripts/main.js');`
+
+Or a bunch at once:
+
+`$spex->addScript(array('scripts/main.js', 'scripts/another.js'));`
+
+If you want to add scripts that are not on the same server as your PW site it's best to hardcode them in your _base template.
+
+### addStyle
+
+Use of this helper is not required, you can work directly with AIOM+ is you want.
+
+Spex can handle .less or .css files. To add one stylesheet to the page at a time, use the below:
+
+`$spex->addStyle('styles/main.less');`
+
+Or add a bunch at once:
+
+`$spex->addStyle(array('styles/main.less', 'styles/home.less'));`
+
 ## Procedural Helpers
 
 Most of the class methods of the Spex class have procedural equivalents. To enable the procedural helpers, in your `templates/_init.php` set:
@@ -237,12 +212,9 @@ The list of procedural helpers is below:
 * addScript
 * docReady
 * addStyle
-* includeStyles
 * addTemplateVar
 * partial
 * setLayout
-* includeScripts
-* includeHeadScripts
 * includeDocReady
 * addImage
 * slot
@@ -252,14 +224,3 @@ The list of procedural helpers is below:
 * addBreadcrumb
 * getBreadcrumbs
 
-## Custom Less Compiler
-
-If you don't want to use the included less compiler (lessphp), you can specify your own. To do that go to the modules page in the backend of processwire, click the settings button next to Spex, and enter a function in the field below "Less Compiler Function". If your function name was `compileWithLessc()`, you would put "compileWithLessc" in there. Below is an example implementation:
-
-    function compileWithLessc($less_path, $css_path)
-    {
-        if ( ! is_file($css_path) || filemtime($css_path) < filemtime($less_path)) {
-
-            `/var/www/lib/vendor/node_modules/less/bin/lessc $less_path $css_path`;
-        }
-    }
