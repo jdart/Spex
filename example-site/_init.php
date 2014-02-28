@@ -1,7 +1,11 @@
 <?php
 
 /**
- * Turn on the functional helpers.
+ * Turn on the procedural helpers so you can use helpers without the $spex variable.
+ * 
+ * i.e. setLayout('one-column') instead of $spex->setLayout('one-column')
+ *
+ * Read more: https://github.com/jdart/Spex#procedural-helpers
  */
 
 // $spex->enableProceduralHelpers();
@@ -16,10 +20,11 @@ $spex->setLayout('one-column');
  * The below makes the variable $homepage available in all templates.
  */
 
-// $spex->addTemplateVar('homepage', $pages->get('/'));
+$spex->addTemplateVar('homepage', $pages->get('/'));
 
 /**
- * Add some assets. jQuery and modernizr are already taken care of.
+ * Add some assets from your site/templates directory, jQuery and assets 
+ * hosted on other domains should be included in your _base layout.
  */
 
 $spex->addScript('scripts/main.js');
