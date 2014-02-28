@@ -1,6 +1,6 @@
 # Spex 0.8.0
 
-## Warning: Starting with 0.8.0 Spex is much less opinionated and uses AIOM over the Minify Module.
+## Warning: Starting with 0.8.0 Spex is much less opinionated and uses AIOM+ over the Minify Module.
 
 ## About Spex
 
@@ -169,7 +169,7 @@ These helpers are a convenience layer on top of the Breadcrumb/Breadcrumbs class
 
 ### addScript
 
-Use of this helper is not required, you can work directly with AIOM+ is you want.
+Use of this helper is not required, you can work directly with AIOM+ if you want.
 
 This function adds a JavaScript file to the page. Spex assumes you want your script tags just before the `</body>` tag. You can add javascript files one at a time like the example code below.
 
@@ -183,7 +183,7 @@ If you want to add scripts that are not on the same server as your PW site it's 
 
 ### addStyle
 
-Use of this helper is not required, you can work directly with AIOM+ is you want.
+Use of this helper is not required, you can work directly with AIOM+ if you want.
 
 Spex can handle .less or .css files. To add one stylesheet to the page at a time, use the below:
 
