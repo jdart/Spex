@@ -25,7 +25,7 @@ class Spex extends WireData implements Module
 	{
 		return array(
 			'title' => 'Spex', 
-			'version' => 80, 
+			'version' => 81, 
 			'summary' => 'An asset and template management module.',
 			'href' => 'https://github.com/jdart/Spex',
 			'singular' => true, 
@@ -206,21 +206,32 @@ class Spex extends WireData implements Module
 
 	public function includeDocReady()
 	{
-		?>
-		<script type="text/javascript">
-			jQuery(function(){
-				<?php echo $this->capturedJs ?>
-			});
-			$(window).load(function(){
-				$.each(<?php echo json_encode($this->images) ?>, function(i, src){
-					$('<img/>')[0].src = src;
-				});
-				$.each(<?php echo json_encode($this->lateLoad) ?>, function(id, html){
-					$('#'+id).replaceWith(html);
-				});
-			});
-		</script>
-		<?php
+		if ( ! $this->capturedJs && ! $this->images && ! $this->lateLoad)
+			return;
+
+?><script type="text/javascript">
+(function($){
+	<?php if ($this->capturedJs): ?>
+	$(function(){
+		<?php echo $this->capturedJs ?>
+	});
+	<?php endif ?>
+	<?php if ($this->images || $this->lateLoad): ?>
+	$(window).load(function(){
+		<?php if ($this->images): ?>
+		$.each(<?php echo json_encode($this->images) ?>, function(i, src){
+			$('<img/>')[0].src = src;
+		});
+		<?php endif ?>
+		<?php if ($this->lateLoad): ?>
+		$.each(<?php echo json_encode($this->lateLoad) ?>, function(id, html){
+			$('#'+id).replaceWith(html);
+		});
+		<?php endif ?>
+	});
+	<?php endif ?>
+})(jQuery);
+</script><?php
 	}
 
 	public function docReady($js=null)
@@ -228,7 +239,7 @@ class Spex extends WireData implements Module
 		static $captureStarted = false;
 
 		if (!is_null($js)) {
-			$this->capturedJs .= ';'.$js;
+			$this->capturedJs .= $js.';';
 			return;
 		}
 
@@ -238,11 +249,11 @@ class Spex extends WireData implements Module
 			return;
 		}
 
-		$this->capturedJs .= ';' . str_ireplace(
+		$this->capturedJs .= str_ireplace(
 			array('<script>', '<script type="text/javascript">', '</script>', "<script type='text/javascript'>"), 
 			'', 
 			ob_get_clean()
-		);
+		).';';
 
 		$captureStarted = false;
 	}
