@@ -1,6 +1,6 @@
 # Spex 0.9.0
 
-Warning: Starting with 0.8.0 Spex is much less opinionated and uses AIOM+ over the Minify Module, please compare your pre 0.8.0 with the new 0.8.0 _base layout.
+Warning: Starting with 0.8.0 Spex is much less opinionated and uses AIOM+ over the Minify Module, please compare your pre 0.8.0 _base layout with the new 0.8.0 _base layout.
 
 New license: since 0.9.0 Spex is using the GPLv3 license.
 
