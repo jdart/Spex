@@ -167,6 +167,7 @@ class Spex extends WireData implements Module
 	public function addTemplateVar($key, $value)
 	{
 		$this->templateVars[$key] = $value;
+		return $value;
 	}
 
 	public function getTemplateVars()
@@ -179,13 +180,13 @@ class Spex extends WireData implements Module
 		);
 	}
 
-	public function addScript($input, $root=null)
+	public function addScript($input, $root='')
 	{
 		if (!is_array($input))
 			$input = array($input);
 
 		foreach ($input as $js)
-			$this->config->scripts->add($js);
+			$this->config->scripts->add($root.$js);
 	}
 
 	public function getScripts()
@@ -193,13 +194,13 @@ class Spex extends WireData implements Module
 		return $this->config->scripts->getIterator()->getArrayCopy();
 	}
 
-	public function addStyle($input, $root=null)
+	public function addStyle($input, $root='')
 	{
 		if (!is_array($input))
 			$input = array($input);
 
 		foreach ($input as $css)
-			$this->config->styles->add($css);
+			$this->config->styles->add($root.$css);
 	}
 
 
