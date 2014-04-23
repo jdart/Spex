@@ -14,4 +14,6 @@
 
 ?>
 
+<?php echo $spex->partial('slider', array('parent' => $page)) ?>
+
 <?php echo $page->body ?>
