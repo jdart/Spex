@@ -149,7 +149,7 @@ This helper is used to preload an image, it also happens to return whatever is p
 
 or 
 
-`<div style="background-image: url(<?php echo $spex->addImage('big-background.png') ?>);"></div>`
+`<div data-background="<?php echo $spex->addImage('big-background.png') ?>"></div>`
 
 ### includeDocReady
 
