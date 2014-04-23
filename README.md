@@ -63,6 +63,8 @@ The template management of Spex means setting a variable in your template doesn'
 
 `$spex->addTemplateVar('homepage', $pages->get('/'));`
 
+If you want a variable to be available on every page then use addTemplateVar in _init.
+
 ### docReady
 
 If you have some JavaScript in your template, you'll want to wrap it in a docReady() like below.

@@ -4,15 +4,18 @@
  * You might want to add some css/less for this layout only.
  */ 
 
-// $spex->addStyle("styles/basic-page.less");
+$spex->addStyle("styles/basic-page.less");
 
 /**
- * To override the default layout change the below.
+ * You can override the default layout by calling setLayout.
  */
 
-// $spex->setLayout('two-column');
+$spex->setLayout('two-column');
 
 ?>
+
+<?php // The below slot will be used later in layouts/two-column.php ?>
+<?php $spex->slot('sidebar_content', '<p>Some markup</p>') ?>
 
 <?php echo $spex->partial('slider', array('parent' => $page)) ?>
 
