@@ -20,7 +20,7 @@ This library was born out of a love of ProcessWire and the yucky feeling the use
 The [usual methods](http://modules.processwire.com/install-uninstall/) apply.
 
 * [AIOM+](http://modules.processwire.com/modules/all-in-one-minify/) is required by Spex, so install it first.
-* Install Spex Module
+* Install the Spex Module
 
 ## File Struture
 
