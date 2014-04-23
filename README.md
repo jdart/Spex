@@ -17,7 +17,10 @@ This library was born out of a love of ProcessWire and the yucky feeling the use
 
 ## Installation
 
-* The [usual methods](http://modules.processwire.com/install-uninstall/) apply.
+The [usual methods](http://modules.processwire.com/install-uninstall/) apply.
+
+* [AIOM+](http://modules.processwire.com/modules/all-in-one-minify/) is required by Spex, so install it first.
+* Install Spex Module
 
 ## File Struture
 
@@ -27,10 +30,14 @@ Below is the expected directory structure in a ProcessWire project using Spex:
 
 * layouts (directory)
     + _base.php
-    + one-column.php
+    + one-column.php (an example)
     + ...
 * partials (directory)
+    + slider.php (an example)
+    + ...
 * _init.php
+* basic-page.php (an example)
+* ...
 
 ### layouts/_base.php
 
