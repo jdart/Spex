@@ -125,7 +125,7 @@ To echo the contents of a slot:
 
 You can check for the existance of a slot with `hasSlot`:
 
-`if (hasSlot('sidebar_content'))`
+`if ($spex->hasSlot('sidebar_content'))`
 
 There is also a variable $slot available should you prefer to use it directly.
 
