@@ -20,7 +20,7 @@ The [usual methods](http://modules.processwire.com/install-uninstall/) apply.
 * [AIOM+](http://modules.processwire.com/modules/all-in-one-minify/) is required by Spex, so install it first.
 * Install the Spex Module
 
-## File Struture
+## File Structure
 
 Spex uses a three-level template inheritance model similar to how Symfony and Twig work by default. The first level is your regular ProcessWire template, the output from that is decorated with a "layout template", and the output from that is decorated with the base layout template which handles the head of your html document and more. You can find some boilerplate code in the example-site directory. 
 
