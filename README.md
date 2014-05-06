@@ -1,8 +1,6 @@
-# Spex 0.9.0
+# Spex 0.9.2
 
 Warning: Starting with 0.8.0 Spex is much less opinionated and uses AIOM+ over the Minify Module, please compare your pre 0.8.0 _base layout with the new 0.8.0 _base layout.
-
-New license: since 0.9.0 Spex is using the GPLv3 license.
 
 ## About Spex
 
@@ -43,13 +41,13 @@ Below is the expected directory structure in a ProcessWire project using Spex:
 
 This file is responsible for outputting the html, head, body, link (css) and script (js) tags.
 
-This file will have a variable `$layout_body` that has the output from the layout.
+This file will have a [slot](https://github.com/jdart/Spex#slot--hasslot) `content` that has the output from the layout.
 
 ### layouts/one-column.php, layouts/two-column.php, etc...
 
 Any file in the layouts directory that is not _base.php is considered a layout. If your site has one column and two column layout you will want to create one-column.php and two-column.php in your layouts directory.
 
-This file will have a variable `$template_output` available that has the output from your template (aka page render).
+This file will have a [slot](https://github.com/jdart/Spex#slot--hasslot) `content` available that has the output from your template (aka page render).
 
 ### _init.php
 

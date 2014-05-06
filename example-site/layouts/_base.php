@@ -18,7 +18,7 @@
 	</head>
 	<body class="<?php echo "template-$page->template section-{$page->rootParent->name} page-$page layout-{$spex->getLayout()}" ?>">
 
-		<?php echo $layout_body ?>
+		<?php echo $spex->slot('content') ?>
 
 		<?php if ($page->editable()): ?>
 			<a class="editpage" href="<?php echo $config->urls->admin ?>page/edit/?id=<?php echo $page->id ?>">Edit</a>

@@ -35,7 +35,7 @@ class Spex extends WireData implements Module
 	{
 		return array(
 			'title' => 'Spex', 
-			'version' => 90, 
+			'version' => 92, 
 			'summary' => 'An asset and template management module.',
 			'href' => 'https://github.com/jdart/Spex',
 			'singular' => true, 
@@ -101,32 +101,22 @@ class Spex extends WireData implements Module
 
 	public function templateFileRenderAfter($event)
 	{
-		if (!$this->isActiveForPage($this->page) || !$this->isActiveForEvent($event))
+		if ( ! $this->isActiveForPage($this->page) || ! $this->isActiveForEvent($event))
 			return;
 
-		if (!$this->layout)
+		if ( ! $this->layout)
 			return;
 
-		$template_output = $event->return;
+		$this->slot('content', $event->return);
 
 		extract($this->getTemplateVars());		
 
-		if ($this->layout === $this->baseLayout) { // skip the layout
+		$this->captureSlot();
+		require $config->paths->templates.'layouts/'.$this->layout.'.php';
+		$this->captureSlot('content');
 
-			$layout_body = $template_output;
-			
-		} else { // wrap page output in layout
-
-			ob_start();
-			require $config->paths->templates.'layouts/'.$this->layout.'.php';
-			$layout_body = ob_get_clean();
-		}
-
-		ob_start();
-
-		// wrap layout output with base layout (head and assets stuff)
+		ob_start(); // wrap layout output with base layout (head and assets stuff)
 		require $config->paths->templates.'layouts/'.$this->baseLayout.'.php';
-
 		$event->return = ob_get_clean();
 	}
 

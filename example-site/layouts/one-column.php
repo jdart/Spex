@@ -5,7 +5,7 @@
 
 	<h1><?php echo $page->title ?></h1>
 
-	<?php echo $template_output ?>
+	<?php echo $spex->slot('content') ?>
 
 </div>
 
