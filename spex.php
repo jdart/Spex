@@ -63,7 +63,7 @@ function slot() {
 	return call_user_func_array(array(spex(), __METHOD__), func_get_args());
 }
 
-function catpureSlot() {
+function captureSlot() {
 
 	return call_user_func_array(array(spex(), __METHOD__), func_get_args());
 }
