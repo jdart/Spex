@@ -29,6 +29,7 @@ class Spex extends WireData implements Module
 		$slots = array(),
 		$images = array(),
 		$lateLoad = array(),
+		$renderStack = null,
 		$breadcrumbs = null;
 
 	public static function getModuleInfo() 
@@ -74,8 +75,11 @@ class Spex extends WireData implements Module
 
 	public function init() 
 	{
+		$this->renderStack = new WireArray;
 		$this->addHookBefore('TemplateFile::render', $this, 'templateFileRenderBefore');
 		$this->addHookAfter('TemplateFile::render', $this, 'templateFileRenderAfter');
+		$this->addHookBefore('Page::render', $this, 'pageRenderBefore');
+		$this->addHookAfter('Page::render', $this, 'pageRenderAfter');
 	}
 
 	public function enableProceduralHelpers()
@@ -83,16 +87,34 @@ class Spex extends WireData implements Module
 		require_once __DIR__.'/spex.php';
 	}
 
+	public function pageRenderBefore($event)
+	{
+		$this->renderStack->add($event->object);
+	}
+
+	public function pageRenderAfter($event)
+	{
+		$this->renderStack->pop();
+	}
+
+	public function getActivePage()
+	{
+		if ( ! $this->renderStack->count())
+			return false;
+
+		return $this->renderStack->first();
+	}
+
 	public function templateFileRenderBefore($event)
 	{
-		if (!$this->isActiveForPage($this->page) || !$this->isActiveForEvent($event) || isset($event->object->hanna))
+		if ( ! $this->isActiveForPage($this->page) || ! $this->isActiveForEvent($event))
 			return;
 
 		extract($this->getTemplateVars());
 
 		$init_file = $this->config->paths->templates . '_init.php';
 
-		if (is_file($init_file))		
+		if (is_file($init_file))
 			require_once $init_file;
 
 		foreach ($this->getTemplateVars() as $key => $value)
@@ -101,7 +123,7 @@ class Spex extends WireData implements Module
 
 	public function templateFileRenderAfter($event)
 	{
-		if ( ! $this->isActiveForPage($this->page) || ! $this->isActiveForEvent($event) || isset($event->object->hanna))
+		if ( ! $this->isActiveForPage($this->page) || ! $this->isActiveForEvent($event))
 			return;
 
 		if ( ! $this->layout)
@@ -129,14 +151,20 @@ class Spex extends WireData implements Module
 
 	public function isActiveForPage($page)
 	{
-		return $page->template->name != 'admin' && !$this->pageIsFormBuilder($page);
+		$activePage = $this->getActivePage();
+
+		return $activePage
+			&& $page->id == $activePage->id
+			&& $page->template->name != 'admin' 
+			&& !$this->pageIsFormBuilder($page);
 	}
 
 	public function isActiveForEvent($event)
 	{
 		$filename = $event->object->get('filename');
 
-		return strpos($filename, '/FormBuilder/') === false;
+		return strpos($filename, '/FormBuilder/') === false
+			&& ! isset($event->object->hanna);
 	}
 
 	public function setLayout($layout)
@@ -164,7 +192,7 @@ class Spex extends WireData implements Module
 	{
 		return array_merge(
 			fuel()->getArray(), 
-			array('spex' => $this, 'metric' => $this),
+			array('spex' => $this),
 			array('slots' => $this->slots),
 			$this->templateVars
 		);
