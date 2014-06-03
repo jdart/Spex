@@ -85,7 +85,7 @@ To set a layout, call setLayout like the below:
 
 That would result in Spex using the layout found at `templates/layouts/one-column.php` being used.
 
-Should you want to disable the layout for a request, do so by calling `$spex->setLayout(false);`.
+Should you want to disable the layout for an AJAX request or something along those lines, do so by calling `$spex->setLayout(false);`.
 
 ### partial
 
