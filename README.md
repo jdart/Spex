@@ -111,7 +111,7 @@ You can also specify a custom cache key like the below:
 
 `$spex->partial('rssFeed', array('url' => '...'), 3600, $user->id);`
 
-If caching a partial, Spex will keep track of assets added with addStyle(), addScript(), addImage(), lateLoad() and docReady(), and duplicate those calls even if necessary.
+If caching a partial, Spex will keep track of assets added with addStyle(), addScript(), addImage(), lateLoad() and docReady(), and duplicate those calls if necessary.
 
 ### slot / hasSlot
 
@@ -153,7 +153,7 @@ or
 
 ### includeDocReady
 
-This draws out any JavaScript captured by docRead(), and is usually only found in the _base layout.
+This draws out any JavaScript captured by docReady(), and is usually only found in the _base layout.
 
 `$spex->includeDocReady();`
 
