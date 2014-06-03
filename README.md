@@ -85,6 +85,8 @@ To set a layout, call setLayout like the below:
 
 That would result in Spex using the layout found at `templates/layouts/one-column.php` being used.
 
+Should you want to disable the layout for a request, do so by calling `$spex->setLayout(false);`.
+
 ### partial
 
 Partials contain reusable fragments of html like a sidebar or toolbar. The convention for partial files is that they are located in a subdirectory of templates called 'partials', i.e. `templates/partials/sidebar.php`. To call the partial sidebar.php you write the below:
