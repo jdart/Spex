@@ -29,7 +29,7 @@ class Spex extends WireData implements Module
 		$slots = array(),
 		$images = array(),
 		$lateLoad = array(),
-		$renderStack = null,
+		$activePage = null,
 		$breadcrumbs = null;
 
 	public static function getModuleInfo() 
@@ -75,11 +75,9 @@ class Spex extends WireData implements Module
 
 	public function init() 
 	{
-		$this->renderStack = new WireArray;
 		$this->addHookBefore('TemplateFile::render', $this, 'templateFileRenderBefore');
 		$this->addHookAfter('TemplateFile::render', $this, 'templateFileRenderAfter');
 		$this->addHookBefore('Page::render', $this, 'pageRenderBefore');
-		$this->addHookAfter('Page::render', $this, 'pageRenderAfter');
 	}
 
 	public function enableProceduralHelpers()
@@ -89,20 +87,13 @@ class Spex extends WireData implements Module
 
 	public function pageRenderBefore($event)
 	{
-		$this->renderStack->add($event->object);
+		if ( ! isset($this->activePage))
+			$this->activePage = $event->object;
 	}
 
-	public function pageRenderAfter($event)
+	public function setActivePage($page)
 	{
-		$this->renderStack->pop();
-	}
-
-	public function getActivePage()
-	{
-		if ( ! $this->renderStack->count())
-			return false;
-
-		return $this->renderStack->first();
+		$this->activePage = $page;
 	}
 
 	public function templateFileRenderBefore($event)
@@ -151,10 +142,8 @@ class Spex extends WireData implements Module
 
 	public function isActiveForPage($page)
 	{
-		$activePage = $this->getActivePage();
-
-		return $activePage
-			&& $page->id == $activePage->id
+		return $this->activePage
+			&& $page->id == $this->activePage->id
 			&& $page->template->name != 'admin' 
 			&& !$this->pageIsFormBuilder($page);
 	}
