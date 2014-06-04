@@ -111,6 +111,7 @@ class Spex extends WireData implements Module
 			return;
 
 		extract($this->getTemplateVars());
+		$page = $this->page;
 
 		$init_file = $this->config->paths->templates . '_init.php';
 
@@ -132,6 +133,7 @@ class Spex extends WireData implements Module
 		$this->slot('content', $event->return);
 
 		extract($this->getTemplateVars());		
+		$page = $this->page;
 
 		$this->captureSlot();
 		require $config->paths->templates.'layouts/'.$this->layout.'.php';
@@ -190,8 +192,11 @@ class Spex extends WireData implements Module
 
 	public function getTemplateVars()
 	{
+		$fuel = fuel()->getArray();
+		unset($fuel['page']);
+
 		return array_merge(
-			fuel()->getArray(), 
+			$fuel,
 			array('spex' => $this),
 			array('slots' => $this->slots),
 			$this->templateVars
@@ -344,6 +349,7 @@ class Spex extends WireData implements Module
 			$docReadyBefore = $this->capturedJs;
 
 			extract($template_vars);
+			$page = $this->page;
 
 			ob_start();
 
