@@ -96,6 +96,12 @@ class Spex extends WireData implements Module
 		$this->activePage = $page;
 	}
 
+	public function renderPage($page)
+	{
+		$this->setActivePage($page);
+		return $page->render();
+	}
+
 	public function templateFileRenderBefore($event)
 	{
 		if ( ! $this->isActiveForPage($this->page) || ! $this->isActiveForEvent($event))
