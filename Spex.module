@@ -110,16 +110,15 @@ class Spex extends WireData implements Module
 		if ( ! $this->isActiveForPage($this->page) || ! $this->isActiveForEvent($event))
 			return;
 
+		foreach ($this->getTemplateVars(false) as $key => $value)
+			$event->object->setGlobal($key, $value);
+
 		extract($this->getTemplateVars());
-		$page = $this->page;
 
 		$init_file = $this->config->paths->templates . '_init.php';
 
 		if (is_file($init_file))
 			require_once $init_file;
-
-		foreach ($this->getTemplateVars() as $key => $value)
-			$event->object->setGlobal($key, $value);
 	}
 
 	public function templateFileRenderAfter($event)
@@ -132,8 +131,7 @@ class Spex extends WireData implements Module
 
 		$this->slot('content', $event->return);
 
-		extract($this->getTemplateVars());		
-		$page = $this->page;
+		extract($this->getTemplateVars());
 
 		$this->captureSlot();
 		require $config->paths->templates.'layouts/'.$this->layout.'.php';
@@ -190,13 +188,10 @@ class Spex extends WireData implements Module
 		return $value;
 	}
 
-	public function getTemplateVars()
+	public function getTemplateVars($include_fuel=true)
 	{
-		$fuel = fuel()->getArray();
-		unset($fuel['page']);
-
 		return array_merge(
-			$fuel,
+			$include_fuel ? fuel()->getArray() : array(),
 			array('spex' => $this),
 			array('slots' => $this->slots),
 			$this->templateVars
