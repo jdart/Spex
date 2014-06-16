@@ -110,9 +110,6 @@ class Spex extends WireData implements Module
 		if ( ! $this->isActiveForPage($this->page) || ! $this->isActiveForEvent($event))
 			return;
 
-		foreach ($this->getTemplateVars(false) as $key => $value)
-			$event->object->setGlobal($key, $value);
-
 		extract($this->getTemplateVars());
 
 		$init_file = $this->config->paths->templates . '_init.php';
@@ -121,6 +118,9 @@ class Spex extends WireData implements Module
 		if (is_file($init_file))
 			require_once $init_file;
 		$this->profiler->stop();
+
+		foreach ($this->getTemplateVars(false) as $key => $value)
+			$event->object->setGlobal($key, $value);
 
 		$this->profiler->start('template: '.pathinfo($event->object->filename, PATHINFO_FILENAME));
 	}
