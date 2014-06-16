@@ -121,8 +121,12 @@ class SpexProfiler extends WireData
 }
 </style>
 <script>
-$(document).on('click', '.profiler a', function(e) {
+$(document).on('click', '.profiler .toggle', function(e) {
 	$('.profiler').toggleClass('closed');
+	e.preventDefault();
+});
+$(document).on('click', '.profiler .remove', function(e) {
+	$('.profiler').remove();
 	e.preventDefault();
 });
 </script>
@@ -146,7 +150,7 @@ $(document).on('click', '.profiler a', function(e) {
 				</tr>
 			<?php endforeach ?>
 			<tr class="total">
-				<td><a href="#open">Toggle</a></td>
+				<td><a class="remove" href="#">&#10006;</a>&nbsp;&nbsp;&nbsp;<a class="toggle" href="#">&dArr;</a></td>
 				<td><?php echo number_format(microtime(TRUE) - $this->firstTime, 3) ?>s</td>
 				<td><?php echo $this->getQueryCount() ?> Queries</td>
 				<td><?php echo $this->formatBytes(memory_get_peak_usage(TRUE)) ?></td>
@@ -155,7 +159,7 @@ $(document).on('click', '.profiler a', function(e) {
 	</table>
 	<table class="summary">
 		<tr class="total">
-			<td><a href="#open">Toggle</a></td>
+			<td><a class="remove" href="#">&#10006;</a>&nbsp;&nbsp;&nbsp;<a class="toggle" href="#">&uArr;</a></td>
 			<td><?php echo number_format(microtime(TRUE) - $this->firstTime, 3) ?>s</td>
 			<td><?php echo $this->getQueryCount() ?> Queries</td>
 			<td><?php echo $this->formatBytes(memory_get_peak_usage(TRUE)) ?></td>
@@ -166,7 +170,7 @@ $(document).on('click', '.profiler a', function(e) {
 		return ob_get_clean();
 	}
 
-	function formatBytes($B, $D=0) 
+	function formatBytes($B, $D=1) 
 	{
 		$S = 'KMGTPEZY';
 		$F = floor((strlen($B) - 1) / 3);
