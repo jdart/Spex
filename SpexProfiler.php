@@ -53,6 +53,9 @@ class SpexProfiler extends WireData
 	bottom: 0;
 	right: 0;
 	z-index: 9999;
+	color: #444;
+	font-family: Arial;
+	font-size: 12px;
 }
 .profiler td, .profiler th {
 	text-align: right;
@@ -71,6 +74,7 @@ class SpexProfiler extends WireData
 	border-spacing: 0;
 	empty-cells: show;
 	border: 1px solid #cbcbcb;
+	border-bottom: none;
 }
 .profiler td:first-child,
 .profiler th:first-child {
@@ -105,6 +109,10 @@ class SpexProfiler extends WireData
 }
 .profiler tbody > tr:last-child td {
 	border-bottom-width: 0;
+}
+.profiler a {
+	color: #111;
+	font-size: 14px;
 }
 .profiler .total {
 	font-weight: bold;
