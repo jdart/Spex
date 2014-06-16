@@ -139,8 +139,8 @@ $(document).on('click', '.profiler a', function(e) {
 		<tbody>
 			<?php foreach ($this->eventHistory as $event): ?>
 				<tr>
-					<td class="name"><?php echo $event['name'] ?>s</td>
-					<td><?php echo number_format($event['mtime'], 3) ?></td>
+					<td class="name"><?php echo $event['name'] ?></td>
+					<td><?php echo number_format($event['mtime'], 3) ?>s</td>
 					<td><?php echo $event['queries'] ?></td>
 					<td><?php echo $this->formatBytes($event['memory']) ?></td>
 				</tr>
