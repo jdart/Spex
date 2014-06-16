@@ -78,6 +78,9 @@ class Spex extends WireData implements Module
 		$this->addHookBefore('TemplateFile::render', $this, 'templateFileRenderBefore');
 		$this->addHookAfter('TemplateFile::render', $this, 'templateFileRenderAfter');
 		$this->addHookBefore('Page::render', $this, 'pageRenderBefore');
+
+		require_once __DIR__.'/SpexProfiler.php';
+		$this->profiler = new SpexProfiler;
 	}
 
 	public function enableProceduralHelpers()
@@ -114,14 +117,20 @@ class Spex extends WireData implements Module
 
 		$init_file = $this->config->paths->templates . '_init.php';
 
+		$this->profiler->start('init');
 		if (is_file($init_file))
 			require_once $init_file;
+		$this->profiler->stop();
+
+		$this->profiler->start('template: '.pathinfo($event->object->filename, PATHINFO_FILENAME));
 	}
 
 	public function templateFileRenderAfter($event)
 	{
 		if ( ! $this->isActiveForPage($this->page) || ! $this->isActiveForEvent($event))
 			return;
+
+		$this->profiler->stop(); // template render
 
 		if ( ! $this->layout)
 			return;
@@ -130,13 +139,19 @@ class Spex extends WireData implements Module
 
 		extract($this->getTemplateVars());
 
+		$this->profiler->start('layout: '.$this->layout);
 		$this->captureSlot();
 		require $config->paths->templates.'layouts/'.$this->layout.'.php';
 		$this->captureSlot('content');
+		$this->profiler->stop(); // layout
 
+		$this->profiler->start('layout: '.$this->baseLayout);
 		ob_start(); // wrap layout output with base layout (head and assets stuff)
 		require $config->paths->templates.'layouts/'.$this->baseLayout.'.php';
 		$event->return = ob_get_clean();
+		$this->profiler->stop(); // base layout
+
+		$event->return = str_replace('</body>', $this->profiler->render(), $event->return);
 	}
 
 	public function pageIsFormBuilder($page)
@@ -288,6 +303,8 @@ class Spex extends WireData implements Module
 	 */
 	public function partial($name, $template_vars=array(), $cache_lifetime=null, $cache_key=false)
 	{
+		$this->profiler->start('partial: '.$name);
+
 		if ( ! is_null($cache_lifetime)) {
 
 			$cache_hash_string = $name;
@@ -319,6 +336,7 @@ class Spex extends WireData implements Module
 
 				$this->docReady($data['docReady']);
 
+				$this->profiler->stop();
 				return $data['body'];
 			}
 		}
@@ -358,9 +376,11 @@ class Spex extends WireData implements Module
 				$cache->save(serialize($data));
 			}
 
+			$this->profiler->stop();
 			return $data['body'];
 		}
 
+		$this->profiler->stop();
 		return '';
 	}
 
