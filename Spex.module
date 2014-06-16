@@ -151,7 +151,7 @@ class Spex extends WireData implements Module
 		$event->return = ob_get_clean();
 		$this->profiler->stop(); // base layout
 
-		$event->return = str_replace('</body>', $this->profiler->render(), $event->return);
+		$event->return = str_replace('</body>', $this->profiler->render().'</body>', $event->return);
 	}
 
 	public function pageIsFormBuilder($page)
