@@ -163,10 +163,14 @@ class Spex extends WireData implements Module
 
 	public function isActiveForPage($page)
 	{
-		return $this->activePage
-			&& $page->id == $this->activePage->id
-			&& $page->template->name != 'admin' 
-			&& !$this->pageIsFormBuilder($page);
+		return $page->id == $this->config->http404PageID
+			|| (
+				$this->activePage
+				&& $page->id == $this->activePage->id
+				&& $page->template->name != 'admin' 
+				&& !$this->pageIsFormBuilder($page)
+			)
+		;
 	}
 
 	public function isActiveForEvent($event)
