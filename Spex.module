@@ -344,6 +344,72 @@ class Spex extends WireData implements Module, ConfigurableModule
 		$captureStarted = false;
 	}
 
+	protected function wakeCachedPartialData(&$data)
+	{
+		$data = unserialize($data);
+
+		foreach ($data['slots'] as $slotName => $slotContent)
+			$this->slot($slotName, $slotContent);
+
+		foreach ($data['styles'] as $style)
+			$this->addStyle($style);
+
+		foreach ($data['scripts'] as $script)
+			$this->addScript($script);
+
+		foreach ($data['lateLoad'] as $lateLoad)
+			$this->lateLoadMarkup($lateLoad, false);
+
+		foreach ($data['images'] as $image)
+			$this->addImage($image);
+
+		$this->docReady($data['docReady']);
+
+		return $data['body'];
+	}
+
+	protected function createPartialData($name, $template_vars)
+	{
+		$stylesBefore = clone $this->config->styles;
+		$scriptBefore = clone $this->config->scripts;
+		$imagesBefore = $this->images;
+		$lateLoadBefore = $this->lateLoad;
+		$docReadyBefore = $this->capturedJs;
+		$slotsBefore = $this->slots;
+
+		$output = $this->getPartialOutput($name)
+
+		return array(
+			'body' => $output, 
+			'styles' => $this->getArrayDiff($this->config->styles, $stylesBefore),
+			'scripts' => $this->getArrayDiff($this->config->scripts, $scriptBefore),
+			'docReady' => str_replace($docReadyBefore, '', $this->capturedJs),
+			'lateLoad' => $this->getArrayDiff($this->lateLoad, $lateLoadBefore),
+			'images' => $this->getArrayDiff($this->images, $imagesBefore),
+			'slots' => $this->getArrayDiff($this->slots, $slotsBefore),
+		);
+	}
+
+	protected function getPartialOutput($name, $template_vars)
+	{
+		$path = sprintf('%spartials/%s.php', $this->config->paths->templates, $name);
+
+		if ( ! is_file($path))
+			return '';
+
+		if (is_array($template_vars))
+			$template_vars = array_merge($this->getTemplateVars(), $template_vars);
+		else
+			$template_vars = $this->getTemplateVars();
+
+		extract($template_vars);
+		$page = $this->page;
+
+		ob_start();
+		require $path;
+		return ob_get_clean();
+	}
+
 	/**
 	 * @param integer $cache_lifetime In seconds, null for no cacheing
 	 * @param string|bool $cache_key If a string then treated as cache key, if true then use the url, if false then always the same.
@@ -351,6 +417,8 @@ class Spex extends WireData implements Module, ConfigurableModule
 	public function partial($name, $template_vars=array(), $cache_lifetime=null, $cache_key=false)
 	{
 		$this->profiler->start('partial: '.$name);
+
+		$output = '';
 
 		if ( ! is_null($cache_lifetime) && $this->valueOrDefault('cache')) {
 
@@ -361,82 +429,29 @@ class Spex extends WireData implements Module, ConfigurableModule
 			elseif ($cache_key === true)
 				$cache_hash_string .= ':'.$_SERVER['REQUEST_URI'];
 
-			$cache_key = md5($cache_hash_string);
-
 			$cache = $this->modules->get('MarkupCache');
 
-			if ($data = $cache->get($cache_key, $cache_lifetime)) {
+			if ($rawData = $cache->get(md5($cache_key), $cache_lifetime)) {
 
-				$data = unserialize($data);
+				$output = $this->wakeCachedPartial($rawData);
 
-				foreach ($data['slots'] as $slotName => $slotContent)
-					$this->slot($slotName, $slotContent);
+			} elseif ($data = $this->createPartialData($name, $template_vars)) {
 
-				foreach ($data['styles'] as $style)
-					$this->addStyle($style);
-
-				foreach ($data['scripts'] as $script)
-					$this->addScript($script);
-
-				foreach ($data['lateLoad'] as $lateLoad)
-					$this->lateLoadMarkup($lateLoad, false);
-
-				foreach ($data['images'] as $image)
-					$this->addImage($image);
-
-				$this->docReady($data['docReady']);
-
-				$this->profiler->stop();
-				return $data['body'];
-			}
-		}
-
-		$path = sprintf('%spartials/%s.php', $this->config->paths->templates, $name);
-
-		if (is_array($template_vars))
-			$template_vars = array_merge($this->getTemplateVars(), $template_vars);
-		else
-			$template_vars = $this->getTemplateVars();
-
-		if (is_file($path)) {
-
-			$stylesBefore = clone $this->config->styles;
-			$scriptBefore = clone $this->config->scripts;
-			$imagesBefore = $this->images;
-			$lateLoadBefore = $this->lateLoad;
-			$docReadyBefore = $this->capturedJs;
-			$slotsBefore = $this->slots;
-
-			extract($template_vars);
-			$page = $this->page;
-
-			ob_start();
-
-			require $path;
-
-			$data = array(
-				'body' => ob_get_clean(), 
-				'styles' => $this->getArrayDiff($this->config->styles, $stylesBefore),
-				'scripts' => $this->getArrayDiff($this->config->scripts, $scriptBefore),
-				'docReady' => str_replace($docReadyBefore, '', $this->capturedJs),
-				'lateLoad' => $this->getArrayDiff($this->lateLoad, $lateLoadBefore),
-				'images' => $this->getArrayDiff($this->images, $imagesBefore),
-				'slots' => $this->getArrayDiff($this->slots, $slotsBefore),
-			);
-
-			if ( ! is_null($cache_lifetime) && $this->valueOrDefault('cache')) {
 				$cache->save(serialize($data));
+				$output = $data['body'];		
 			}
 
-			$this->profiler->stop();
-			return $data['body'];
+		} else {
+
+			$output = $this->getPartialOutput($name, $template_vars);
 		}
 
 		$this->profiler->stop();
-		return '';
+
+		return $output;
 	}
 
-	public function getArrayDiff($after, $before)
+	protected function getArrayDiff($after, $before)
 	{
 		if ($after instanceof FilenameArray)
 			$after = $after->getIterator()->getArrayCopy();
