@@ -369,6 +369,9 @@ class Spex extends WireData implements Module, ConfigurableModule
 
 				$data = unserialize($data);
 
+				foreach ($data['slots'] as $slotName => $slotContent)
+					$this->slot($slotName, $slotContent);
+
 				foreach ($data['styles'] as $style)
 					$this->addStyle($style);
 
@@ -402,6 +405,7 @@ class Spex extends WireData implements Module, ConfigurableModule
 			$imagesBefore = $this->images;
 			$lateLoadBefore = $this->lateLoad;
 			$docReadyBefore = $this->capturedJs;
+			$slotsBefore = $this->slots;
 
 			extract($template_vars);
 			$page = $this->page;
@@ -417,6 +421,7 @@ class Spex extends WireData implements Module, ConfigurableModule
 				'docReady' => str_replace($docReadyBefore, '', $this->capturedJs),
 				'lateLoad' => $this->getArrayDiff($this->lateLoad, $lateLoadBefore),
 				'images' => $this->getArrayDiff($this->images, $imagesBefore),
+				'slots' => $this->getArrayDiff($this->slots, $slotsBefore),
 			);
 
 			if ( ! is_null($cache_lifetime) && $this->valueOrDefault('cache')) {
