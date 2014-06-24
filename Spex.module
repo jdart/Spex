@@ -19,7 +19,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-class Spex extends WireData implements Module
+class Spex extends WireData implements Module, ConfigurableModule
 {
 	protected 
 		$capturedJs = '',
@@ -31,6 +31,10 @@ class Spex extends WireData implements Module
 		$lateLoad = array(),
 		$activePage = null,
 		$breadcrumbs = null;
+
+	static $defaults = array(
+		'cache' => true
+	);
 
 	public static function getModuleInfo() 
 	{
@@ -81,6 +85,45 @@ class Spex extends WireData implements Module
 
 		require_once __DIR__.'/SpexProfiler.php';
 		$this->profiler = new SpexProfiler;
+	}
+
+	public static function getModuleConfigInputfields(array $data)
+	{
+		$fields = new InputfieldWrapper();
+		$modules = Wire::getFuel('modules');
+
+		$field = $modules->get("InputfieldCheckbox");
+		$field->name = "cache";
+		$field->label = __("Enable cache");
+		$field->checked = static::dataValueOrDefault('cache', $data);
+		$field->description = __("This will enable caching on partials.");
+		$fields->add($field);
+
+		return $fields;
+	}
+
+	public static function dataValueOrDefault($key, $data=null)
+	{
+		if ( ! isset($data[$key]))
+			if (isset(static::$defaults[$key]))
+				return static::$defaults[$key];
+			else
+				return null;
+
+		return $data[$key];
+	}
+
+	public function valueOrDefault($key)
+	{
+		$value = $this->get($key);
+
+		if (is_null($value)) {
+			if (isset(static::$defaults[$key]))
+				return static::$defaults[$key];
+			return $value;
+		}
+
+		return $value;
 	}
 
 	public function enableProceduralHelpers()
@@ -309,7 +352,7 @@ class Spex extends WireData implements Module
 	{
 		$this->profiler->start('partial: '.$name);
 
-		if ( ! is_null($cache_lifetime)) {
+		if ( ! is_null($cache_lifetime) && $this->valueOrDefault('cache')) {
 
 			$cache_hash_string = $name;
 
@@ -376,7 +419,7 @@ class Spex extends WireData implements Module
 				'images' => $this->getArrayDiff($this->images, $imagesBefore),
 			);
 
-			if ( ! is_null($cache_lifetime)) {
+			if ( ! is_null($cache_lifetime) && $this->valueOrDefault('cache')) {
 				$cache->save(serialize($data));
 			}
 
