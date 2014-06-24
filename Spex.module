@@ -40,7 +40,7 @@ class Spex extends WireData implements Module, ConfigurableModule
 	{
 		return array(
 			'title' => 'Spex', 
-			'version' => 96, 
+			'version' => 97, 
 			'summary' => 'An asset and template management module.',
 			'href' => 'https://github.com/jdart/Spex',
 			'singular' => true, 
