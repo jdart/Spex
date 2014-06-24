@@ -1,4 +1,4 @@
-# Spex 0.9.7
+# Spex 0.9.8
 
 Warning: Starting with 0.8.0 Spex is much less opinionated and uses AIOM+ over the Minify Module, please compare your pre 0.8.0 _base layout with the new 0.8.0 _base layout.
 

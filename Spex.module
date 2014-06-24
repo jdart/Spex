@@ -40,7 +40,7 @@ class Spex extends WireData implements Module, ConfigurableModule
 	{
 		return array(
 			'title' => 'Spex', 
-			'version' => 97, 
+			'version' => 98, 
 			'summary' => 'An asset and template management module.',
 			'href' => 'https://github.com/jdart/Spex',
 			'singular' => true, 
@@ -431,7 +431,7 @@ class Spex extends WireData implements Module, ConfigurableModule
 
 			$cache = $this->modules->get('MarkupCache');
 
-			if ($rawData = $cache->get(md5($cache_key), $cache_lifetime)) {
+			if ($rawData = $cache->get(md5($cache_hash_string), $cache_lifetime)) {
 
 				$output = $this->wakeCachedPartialData($rawData);
 
