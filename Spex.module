@@ -377,7 +377,7 @@ class Spex extends WireData implements Module, ConfigurableModule
 		$docReadyBefore = $this->capturedJs;
 		$slotsBefore = $this->slots;
 
-		$output = $this->getPartialOutput($name)
+		$output = $this->getPartialOutput($name, $template_vars);
 
 		return array(
 			'body' => $output, 
@@ -433,7 +433,7 @@ class Spex extends WireData implements Module, ConfigurableModule
 
 			if ($rawData = $cache->get(md5($cache_key), $cache_lifetime)) {
 
-				$output = $this->wakeCachedPartial($rawData);
+				$output = $this->wakeCachedPartialData($rawData);
 
 			} elseif ($data = $this->createPartialData($name, $template_vars)) {
 
