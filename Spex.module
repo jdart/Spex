@@ -40,11 +40,10 @@ class Spex extends WireData implements Module, ConfigurableModule
 	{
 		return array(
 			'title' => 'Spex', 
-			'version' => 98, 
+			'version' => 99, 
 			'summary' => 'An asset and template management module.',
 			'href' => 'https://github.com/jdart/Spex',
 			'singular' => true, 
-			'requires' => array('AllInOneMinify'),
 			'autoload' => true,
 		);
 	}
@@ -271,6 +270,10 @@ class Spex extends WireData implements Module, ConfigurableModule
 
 	public function addStyle($input, $root='')
 	{
+		if (pathinfo($input, PATHINFO_EXTENSION) === 'less' && ! $this->modules->isInstalled('AllInOneMinify')) {
+			throw new Exception('You must install AllInOneMinify to get less support.');
+		}
+
 		if (!is_array($input))
 			$input = array($input);
 
